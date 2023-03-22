@@ -35,6 +35,13 @@ ghc-options:
 
 library:
   source-dirs: src
+  dependencies: 
+    - scotty
+    - aeson
+    - mysql-simple
+    - password
+    - text
+    - bytestring
 
 executables:
   backend-exe:

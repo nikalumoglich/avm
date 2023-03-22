@@ -7,13 +7,12 @@ cabal-version: 1.12
 name:           backend
 version:        0.1.0.0
 description:    Please see the README on GitHub at <https://github.com/githubuser/backend#readme>
-homepage:       https://github.com/githubuser/backend#readme
-bug-reports:    https://github.com/githubuser/backend/issues
-author:         Author name here
-maintainer:     example@example.com
-copyright:      2023 Author name here
+homepage:       https://github.com/nikalumoglich/avm#readme
+bug-reports:    https://github.com/nikalumoglich/avm/issues
+author:         Andre Mesquita
+maintainer:     nikal.umoglich@gmail.com
+copyright:      2023 Andre Mesquita Pereira
 license:        BSD3
-license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
@@ -21,18 +20,25 @@ extra-source-files:
 
 source-repository head
   type: git
-  location: https://github.com/githubuser/backend
+  location: https://github.com/nikalumoglich/avm
 
 library
   exposed-modules:
-      Lib
+      App
+      Security.Password
   other-modules:
       Paths_backend
   hs-source-dirs:
       src
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
-      base >=4.7 && <5
+      aeson
+    , base >=4.7 && <5
+    , bytestring
+    , mysql-simple
+    , password
+    , scotty
+    , text
   default-language: Haskell2010
 
 executable backend-exe
