@@ -78,9 +78,6 @@ app = do
                     let userWithHashedPassword = user { password' = TL.unpack hashedPassword }
                     userId <- liftIO (saveUser conn userWithHashedPassword)
                     text (TL.pack ("User created, id: " ++ show userId))
-            --beam <- param "word"
-            --hashedPassword <- Password.hashPassword beam
-            --html $ mconcat ["<h1>Scotty, ", hashedPassword, " me up!</h1>"]
 
         post "/signin" $ do
             requestBody <- body
