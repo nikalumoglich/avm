@@ -1,3 +1,6 @@
+{-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+{-# HLINT ignore "Replace case with maybe" #-}
+
 module Handlers.HandlerCommons
     ( handleJsonRequest
     ) where
