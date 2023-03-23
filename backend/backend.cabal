@@ -25,7 +25,10 @@ source-repository head
 library
   exposed-modules:
       App
+      Model.User
       Security.Password
+      Transport.CreateUserRequest
+      Transport.SignInRequest
   other-modules:
       Paths_backend
   hs-source-dirs:
