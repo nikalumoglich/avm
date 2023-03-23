@@ -25,6 +25,9 @@ source-repository head
 library
   exposed-modules:
       App
+      Handlers.HandlerCommons
+      Handlers.SignInHandler
+      Handlers.SignUpHandler
       Model.User
       Security.Password
       Transport.CreateUserRequest
