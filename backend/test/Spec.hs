@@ -1,2 +1,10 @@
+import Test.Hspec
+
+import qualified PasswordSpec as PasswordSpec
+
 main :: IO ()
-main = putStrLn "Test suite not yet implemented"
+main = hspec spec
+
+spec :: Spec
+spec = do
+  PasswordSpec.suiteSpec

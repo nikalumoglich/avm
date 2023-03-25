@@ -1,0 +1,3 @@
+install ncurses-devel on fedora
+
+sudo apt install libtinfo-dev on debian based
