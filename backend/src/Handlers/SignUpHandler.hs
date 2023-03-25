@@ -20,5 +20,7 @@ signUpHandler conn = HandlersCommons.handleJsonRequest (text "Invalid JSON") (\u
                 hashedPassword <- Password.hashPassword (CreateUserRequest.password user)
                 let userWithHashedPassword = user { CreateUserRequest.password = TL.unpack hashedPassword }
                 userId <- liftIO (User.saveUser conn userWithHashedPassword)
-                text (TL.pack ("User created, id: " ++ show userId))
+                case userId of
+                    Nothing -> text (TL.pack "User not created")
+                    Just uId -> text (TL.pack ("User created, id: " ++ show uId))
                 )

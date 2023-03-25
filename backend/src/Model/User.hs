@@ -8,7 +8,7 @@ module Model.User
     , password
     , saveUser
     , getUserByEmail
-    , User ( User )
+    , User ( User, UserNotFound, Error )
     ) where
 
 import GHC.Generics
@@ -21,21 +21,26 @@ data User = User
   , name :: String
   , email :: String
   , password :: String
-  } deriving (Show, Eq, Generic)
+  } | UserNotFound | Error String 
+  deriving (Show, Eq, Generic)
 
 instance Aeson.FromJSON User
 instance Aeson.ToJSON User
 
-saveUser :: Connection -> CreateUserRequest.CreateUserRequest -> IO Int
+saveUser :: Connection -> CreateUserRequest.CreateUserRequest -> IO (Maybe Int)
 saveUser conn user = do
-    _ <- execute conn "INSERT INTO users (name, email, hashed_password) values (?, ?, ?)" (CreateUserRequest.name user, CreateUserRequest.email user, CreateUserRequest.password user)
-    [Only lastReturnedId] <- query_ conn "SELECT LAST_INSERT_ID();"
-    return lastReturnedId
+    existingUser <- getUserByEmail conn $ CreateUserRequest.email user
+    case existingUser of
+        UserNotFound -> do
+            _ <- execute conn "INSERT INTO users (name, email, hashed_password) values (?, ?, ?)" (CreateUserRequest.name user, CreateUserRequest.email user, CreateUserRequest.password user)
+            [Only lastReturnedId] <- query_ conn "SELECT LAST_INSERT_ID();"
+            return lastReturnedId
+        _ -> return Nothing
 
-getUserByEmail :: Connection -> String -> IO (Either String User)
+getUserByEmail :: Connection -> String -> IO User
 getUserByEmail conn email = do
     rows <- query conn "SELECT * FROM users WHERE email = ?" (Only email :: Only String)
     case rows of
-        [] -> return (Left "No user found")
-        [(userId, name, email, password)] -> return (Right (User { userId = userId, name = name, email = email, password = password }))
-        _ -> return (Left "Multiple users found")
+        [] -> return UserNotFound
+        [(userId, name, email, password)] -> return (User { userId = userId, name = name, email = email, password = password })
+        _ -> return (Error "Multiple users found")
