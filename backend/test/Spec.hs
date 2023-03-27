@@ -1,7 +1,8 @@
 import Test.Hspec
 
-import qualified PasswordSpec as PasswordSpec
-import qualified UserSpec as UserSpec
+import qualified PasswordSpec
+import qualified UserSpec
+import qualified JwtSpec
 
 main :: IO ()
 main = hspec spec
@@ -11,3 +12,5 @@ spec = do
   PasswordSpec.suiteSpec
 
   UserSpec.suiteSpec
+
+  JwtSpec.suiteSpec

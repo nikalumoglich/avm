@@ -9,6 +9,7 @@ module Security.Jwt
 
 import qualified Data.Text as T
 import qualified Data.Map as Map
+import Data.Maybe
 import qualified Data.Aeson as Aeson
 import qualified Data.Scientific as Scientific
 import Web.JWT
@@ -27,11 +28,13 @@ encodeSession secret session = do
         }
         key = hmacSecret . T.pack $ secret
     let encoded = encodeSigned key mempty cs
-    putStrLn (T.unpack encoded)
     return (T.unpack encoded)
 
-decodeSession :: String -> String -> Maybe Session.Session
-decodeSession secret encodedJwt = do
+decodeSession :: String -> String -> Session.Session
+decodeSession secret encodedJwt = fromJust $ decodeSession' secret encodedJwt
+
+decodeSession' :: String -> String -> Maybe Session.Session
+decodeSession' secret encodedJwt = do
     let input = T.pack encodedJwt
     let mJwt = decodeAndVerifySignature (toVerify . hmacSecret . T.pack $ secret) input
     case mJwt of
