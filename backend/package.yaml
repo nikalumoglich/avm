@@ -42,6 +42,10 @@ library:
     - password
     - text
     - bytestring
+    - jwt
+    - time
+    - containers
+    - scientific
 
 executables:
   backend-exe:
@@ -68,3 +72,7 @@ tests:
     - QuickCheck
     - text
     - mysql-simple
+    - jwt
+    - time
+    - containers
+    - scientific

@@ -10,7 +10,9 @@ import Database.MySQL.Simple
 import Control.Monad.IO.Class
 import qualified Data.Text.Lazy as TL
 import qualified Security.Password as Password
+import qualified Security.Jwt as Jwt
 import qualified Model.User as User
+import qualified Model.Session as Session
 import qualified Transport.SignInRequest as SignInRequest
 import qualified Handlers.HandlerCommons as HandlersCommons
 
@@ -23,7 +25,9 @@ signInHandler conn = HandlersCommons.handleJsonRequest (text "Invalid JSON") (\s
                     user' ->
                         if Password.comparePassword (User.password user') (SignInRequest.password signInRequest)
                             then do
-                                text "OK"
+                                session <- liftIO (Session.saveSession conn user')
+                                encodedToken <- liftIO (Jwt.encodeSession "secret" session)
+                                text (TL.pack encodedToken)
                             else do
                                 text "Not OK"
                 )

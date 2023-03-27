@@ -28,7 +28,9 @@ library
       Handlers.HandlerCommons
       Handlers.SignInHandler
       Handlers.SignUpHandler
+      Model.Session
       Model.User
+      Security.Jwt
       Security.Password
       Transport.CreateUserRequest
       Transport.SignInRequest
@@ -41,10 +43,14 @@ library
       aeson
     , base >=4.7 && <5
     , bytestring
+    , containers
+    , jwt
     , mysql-simple
     , password
+    , scientific
     , scotty
     , text
+    , time
   default-language: Haskell2010
 
 executable backend-exe
@@ -73,7 +79,11 @@ test-suite backend-test
       QuickCheck
     , backend
     , base >=4.7 && <5
+    , containers
     , hspec
+    , jwt
     , mysql-simple
+    , scientific
     , text
+    , time
   default-language: Haskell2010
