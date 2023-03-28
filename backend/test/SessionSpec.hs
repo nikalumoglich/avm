@@ -40,3 +40,6 @@ suiteSpec = do
     it "renewSession should return session not found" $ do
       dbConn <- createDbConn
       renewSession dbConn (Session { sessionId = 2, userId = 1, expiration = 0 }) >>= (`shouldBe` SessionNotFound)
+
+    it "show session should show" $ do
+      show Session { sessionId = 1, userId = 2, expiration = 3 } `shouldBe` "Session {sessionId = 1, userId = 2, expiration = 3}"
