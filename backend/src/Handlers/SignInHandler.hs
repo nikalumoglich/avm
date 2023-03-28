@@ -20,7 +20,6 @@ signInHandler :: Connection -> ActionT TL.Text IO ()
 signInHandler conn = HandlersCommons.handleJsonRequest (text "Invalid JSON") (\signInRequest -> do
                 user <- liftIO (User.getUserByEmail conn (SignInRequest.email signInRequest))
                 case user of
-                    User.Error errorMessage -> text $ TL.pack errorMessage
                     User.UserNotFound -> text $ TL.pack "User not found"
                     user' ->
                         if Password.comparePassword (User.password user') (SignInRequest.password signInRequest)

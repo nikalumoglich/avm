@@ -9,7 +9,7 @@ module Model.User
     , password
     , saveUser
     , getUserByEmail
-    , User ( User, UserNotFound, Error )
+    , User ( User, UserNotFound )
     ) where
 
 import GHC.Generics
@@ -22,7 +22,7 @@ data User = User
   , name :: String
   , email :: String
   , password :: String
-  } | UserNotFound | Error String 
+  } | UserNotFound
   deriving (Show, Eq, Generic)
 
 instance Aeson.FromJSON User

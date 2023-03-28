@@ -4,7 +4,10 @@ import qualified PasswordSpec
 import qualified JwtSpec
 import qualified UserSpec
 import qualified SessionSpec
+import qualified SignUpHandlerSpec
+import qualified SignInHandlerSpec
 
+-- get database params from test env
 main :: IO ()
 main = hspec spec
 
@@ -17,3 +20,7 @@ spec = do
   JwtSpec.suiteSpec
 
   SessionSpec.suiteSpec
+
+  SignUpHandlerSpec.suiteSpec
+
+  SignInHandlerSpec.suiteSpec

@@ -46,6 +46,8 @@ library:
     - time
     - containers
     - scientific
+    - wai
+    - warp
 
 executables:
   backend-exe:
@@ -76,3 +78,10 @@ tests:
     - time
     - containers
     - scientific
+    - hspec-wai
+    - hspec-wai-json
+    - wai
+    - warp
+    - wai-extra
+    - http-types
+    - bytestring
