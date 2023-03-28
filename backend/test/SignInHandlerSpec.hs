@@ -52,35 +52,11 @@ invalidLoginRequest2 = "{ \
 \    \"password\": \"somepasswordwrong\" \
 \}"
 
--- shouldRespondWithPredicate :: HasCallStack => WaiSession st SResponse -> String -> (TL.Text -> Bool) -> Bool -> WaiExpectation st
 shouldRespondWithPredicate action (matcher, errorMessage) = do
   r <- action
-  liftIO $ print (simpleBody r)
   if matcher (EL.decodeUtf8  (simpleBody r))
     then mapM_ (liftIO . expectationFailure) [] 
     else mapM_ (liftIO . expectationFailure) [(errorMessage)]
-
-match' :: SResponse -> ResponseMatcher -> Maybe String
-match' (SResponse (Status status _) headers body) (ResponseMatcher expectedStatus expectedHeaders (MatchBody bodyMatcher)) = mconcat [
-    actualExpected "status mismatch:" (show status) (show expectedStatus) <$ guard (status /= expectedStatus)
-  , checkHeaders headers body expectedHeaders
-  , bodyMatcher headers body
-  ]
-
-actualExpected :: String -> String -> String -> String
-actualExpected message actual expected = unlines [
-    message
-  , "  expected: " ++ expected
-  , "  but got:  " ++ actual
-  ]
-
-checkHeaders :: [Header] -> Body -> [MatchHeader] -> Maybe String
-checkHeaders headers body m = case go m of
-    [] -> Nothing
-    xs -> Just (mconcat xs ++ "the actual headers were:\n" ++ unlines (map formatHeader headers))
-  where
-    go = catMaybes . map (\(MatchHeader p) -> p headers body)
-
 
 suiteSpec :: Spec
 suiteSpec = do
@@ -94,8 +70,8 @@ suiteSpec = do
       it "SignIn should not login user" $ do
         post "/signin" invalidLoginRequest `shouldRespondWith` "Not OK"
 
-      it "SignIn should find user" $ do
-        post "/signin" invalidLoginRequest2 `shouldRespondWith` "Not OK"
+      it "SignIn should not find user" $ do
+        post "/signin" invalidLoginRequest2 `shouldRespondWith` "User not found"
 
       it "SignIn should login user" $ do
         post "/signin" validLoginRequest `shouldRespondWithPredicate` (f,"Start of the token does not match expected") where f = (\response -> "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" `TL.isPrefixOf` response)
