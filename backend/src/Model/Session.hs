@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# OPTIONS_GHC -Wno-partial-fields #-}
 
 module Model.Session
     ( sessionId
@@ -36,17 +37,17 @@ saveSession conn user = do
 
 getActiveSession :: Connection -> User.User -> IO Session
 getActiveSession conn user = do
-    rows <- query conn "SELECT * FROM sessions WHERE user_id = ? AND exp < UNIX_TIMESTAMP() ORDER BY expiration DESC" (Only (User.userId user) :: Only Int)
+    rows <- query conn "SELECT * FROM sessions WHERE user_id = ? AND expiration > UNIX_TIMESTAMP() ORDER BY expiration DESC" (Only (User.userId user) :: Only Int)
     case rows of
         [] -> return SessionNotFound
         ((sessionId, userId, expiration):_) -> return (Session { sessionId = sessionId, userId = userId, expiration = expiration })
 
 renewSession :: Connection -> Session -> IO Session
 renewSession conn session = do
-    rows <- query conn "SELECT * FROM sessions WHERE id = ? AND exp < UNIX_TIMESTAMP() ORDER BY expiration DESC" (Only (sessionId session) :: Only Int)
+    rows <- query conn "SELECT * FROM sessions WHERE id = ? AND expiration > UNIX_TIMESTAMP() ORDER BY expiration DESC" (Only (sessionId session) :: Only Int)
     case rows of
         [] -> return SessionNotFound
-        ((sId, userId, expiration):_) -> do
+        (sId, userId, expiration):_ -> do
             currentTimestamp <- getPOSIXTime
             _ <- execute conn "UPDATE sessions SET expiration = ? WHERE id = ?" (round (currentTimestamp + 60) :: Int, sessionId session)
             return (Session { sessionId = sId, userId = userId, expiration = expiration })

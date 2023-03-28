@@ -6,8 +6,8 @@ module UserSpec
 
 import Test.Hspec
 import Database.MySQL.Simple
-import Model.User
 import qualified Transport.CreateUserRequest as CreateUserRequest
+import Model.User
 
 createDbConn :: IO Connection
 createDbConn = connect (defaultConnectInfo { connectHost = "127.0.0.1", connectUser = "haskelluser", connectPassword = "haskellpassword", connectDatabase = "avm_test" })
@@ -32,3 +32,15 @@ suiteSpec = do
     it "getUserByEmail should fail if user does not exist" $ do
       dbConn <- createDbConn
       getUserByEmail dbConn "doesnotexist" >>= (`shouldBe` UserNotFound)
+
+    it "name should return name" $ do
+      name User { userId = 1, name = "name", email = "email", password = "password" } `shouldBe` "name"
+
+    it "email should return email" $ do
+      email User { userId = 1, name = "name", email = "email", password = "password" } `shouldBe` "email"
+
+    it "password should return password" $ do
+      password User { userId = 1, name = "name", email = "email", password = "password" } `shouldBe` "password"
+
+    it "show user should show" $ do
+      show User { userId = 1, name = "name", email = "email", password = "password" } `shouldBe` "User {userId = 1, name = \"name\", email = \"email\", password = \"password\"}"

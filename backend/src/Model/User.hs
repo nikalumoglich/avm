@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# OPTIONS_GHC -Wno-partial-fields #-}
 
 module Model.User
     ( userId
@@ -42,5 +43,4 @@ getUserByEmail conn email = do
     rows <- query conn "SELECT * FROM users WHERE email = ?" (Only email :: Only String)
     case rows of
         [] -> return UserNotFound
-        [(userId, name, email, password)] -> return (User { userId = userId, name = name, email = email, password = password })
-        _ -> return (Error "Multiple users found")
+        (userId, name, email', password):_ -> return (User { userId = userId, name = name, email = email', password = password })

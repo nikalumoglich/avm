@@ -9,7 +9,7 @@ CREATE TABLE `users` (
 CREATE TABLE sessions (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	user_id BIGINT UNSIGNED NULL,
-	`expiration` varchar(100) NULL,
+	`expiration` BIGINT UNSIGNED NULL,
 	PRIMARY KEY (id)
 )
 ENGINE=InnoDB
