@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE QuasiQuotes #-}
 
 module SignUpHandlerSpec
     ( suiteSpec
@@ -7,25 +6,19 @@ module SignUpHandlerSpec
 
 import Test.Hspec
 import Test.Hspec.Wai
-import Test.Hspec.Wai.JSON
 import Database.MySQL.Simple
-import qualified Transport.CreateUserRequest as CreateUserRequest
-import qualified Model.User as User
-import Handlers.SignUpHandler
-import Network.Wai (Application)
+import qualified Data.ByteString.Lazy as DBL
 import App
 
-createDbConn :: IO Connection
-createDbConn = connect (defaultConnectInfo { connectHost = "127.0.0.1", connectUser = "haskelluser", connectPassword = "haskellpassword", connectDatabase = "avm_test" })
-
+validRequest :: DBL.ByteString
 validRequest = "{ \
 \    \"name\": \"Andre\", \
 \    \"email\": \"tiozao@tiozao.com\", \
 \    \"password\": \"somepassword\" \
 \}"
 
-suiteSpec :: Spec
-suiteSpec = do
+suiteSpec :: Connection -> Spec
+suiteSpec dbConn = do
 
   with (api "avm_test") $ do
     describe "SignUpHandlerSpec" $ do
@@ -34,7 +27,6 @@ suiteSpec = do
         post "/signup" "data" `shouldRespondWith` "Invalid JSON"
 
       it "SignUp should create user" $ do
-        dbConn <- liftIO (createDbConn)
         _ <- liftIO (execute dbConn "TRUNCATE TABLE users" ())
         post "/signup" validRequest `shouldRespondWith` "User created, id: 1"
 

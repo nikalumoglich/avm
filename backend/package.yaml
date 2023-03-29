@@ -80,6 +80,7 @@ tests:
     - scientific
     - hspec-wai
     - hspec-wai-json
+    - hspec-core
     - wai
     - warp
     - wai-extra

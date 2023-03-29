@@ -15,7 +15,6 @@ import Network.Wai.Handler.Warp (run)
 app :: IO ()
 app = do
     -- get database params from env
-    dbConn <- connect (defaultConnectInfo { connectHost = "127.0.0.1", connectUser = "haskelluser", connectPassword = "haskellpassword", connectDatabase = "avm" })
     api "avm" >>= run 3000
 
 api :: String -> IO Application

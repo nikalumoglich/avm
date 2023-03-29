@@ -16,7 +16,7 @@ data CreateUserRequest = CreateUserRequest
   { name :: String
   , email :: String
   , password :: String
-  } deriving (Show, Eq, Generic)
+  } deriving (Generic)
 
 instance Aeson.FromJSON CreateUserRequest where
     parseJSON (Aeson.Object v) = CreateUserRequest

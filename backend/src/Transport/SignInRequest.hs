@@ -14,7 +14,7 @@ import qualified Data.Aeson as Aeson
 data SignInRequest = SignInRequest
   { email :: String
   , password :: String
-  } deriving (Show, Eq, Generic)
+  } deriving (Generic)
 
 instance Aeson.FromJSON SignInRequest where
     parseJSON (Aeson.Object v) = SignInRequest
