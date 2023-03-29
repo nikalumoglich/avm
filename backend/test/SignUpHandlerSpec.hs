@@ -13,7 +13,7 @@ import App
 validRequest :: DBL.ByteString
 validRequest = "{ \
 \    \"name\": \"Andre\", \
-\    \"email\": \"tiozao@tiozao.com\", \
+\    \"email\": \"email@example.com\", \
 \    \"password\": \"somepassword\" \
 \}"
 
