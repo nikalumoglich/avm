@@ -15,13 +15,13 @@ import App
 
 validLoginRequest :: DBL.ByteString
 validLoginRequest = "{ \
-\    \"email\": \"tiozao@tiozao.com\", \
+\    \"email\": \"email@example.com\", \
 \    \"password\": \"somepassword\" \
 \}"
 
 invalidLoginRequest :: DBL.ByteString
 invalidLoginRequest = "{ \
-\    \"email\": \"tiozao@tiozao.com\", \
+\    \"email\": \"email@example.com\", \
 \    \"password\": \"somepasswordwrong\" \
 \}"
 
