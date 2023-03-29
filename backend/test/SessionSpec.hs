@@ -21,10 +21,10 @@ suiteSpec dbConn = do
 
     it "getActiveSession should return session" $ do
       currentTimestamp <- getPOSIXTime
-      getActiveSession dbConn (User.User 1 "name" "email" "password") >>= (`shouldBe` Session { sessionId = 1, userId = 1, expiration = round currentTimestamp + 60 })
+      getActiveSession dbConn 1 >>= (`shouldBe` Session { sessionId = 1, userId = 1, expiration = round currentTimestamp + 60 })
 
     it "getActiveSession should return session not found" $ do
-      getActiveSession dbConn (User.User 2 "name" "email" "password") >>= (`shouldBe` SessionNotFound)
+      getActiveSession dbConn 2 >>= (`shouldBe` SessionNotFound)
 
     it "renewSession should return session with new expiration date" $ do
       currentTimestamp <- getPOSIXTime
@@ -35,3 +35,7 @@ suiteSpec dbConn = do
 
     it "show session should show" $ do
       show Session { sessionId = 1, userId = 2, expiration = 3 } `shouldBe` "Session {sessionId = 1, userId = 2, expiration = 3}"
+
+    it "getActiveSession should return session not found for expired session" $ do
+      _ <- execute dbConn "UPDATE sessions SET expiration = 0 where 1 = 1" ()
+      getActiveSession dbConn 1 >>= (`shouldBe` SessionNotFound)

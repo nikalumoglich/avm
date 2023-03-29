@@ -35,12 +35,12 @@ saveSession conn user = do
     [Only lastReturnedId] <- query_ conn "SELECT LAST_INSERT_ID();"
     return Session { sessionId = lastReturnedId, userId = User.userId user, expiration = round (currentTimestamp + 60) }
 
-getActiveSession :: Connection -> User.User -> IO Session
-getActiveSession conn user = do
-    rows <- query conn "SELECT * FROM sessions WHERE user_id = ? AND expiration > UNIX_TIMESTAMP() ORDER BY expiration DESC" (Only (User.userId user) :: Only Int)
+getActiveSession :: Connection -> Int -> IO Session
+getActiveSession conn userId = do
+    rows <- query conn "SELECT * FROM sessions WHERE user_id = ? AND expiration > UNIX_TIMESTAMP() ORDER BY expiration DESC" (Only (userId :: Int))
     case rows of
         [] -> return SessionNotFound
-        ((sessionId, userId, expiration):_) -> return (Session { sessionId = sessionId, userId = userId, expiration = expiration })
+        ((sessionId, userId', expiration):_) -> return (Session { sessionId = sessionId, userId = userId', expiration = expiration })
 
 renewSession :: Connection -> Session -> IO Session
 renewSession conn session = do
