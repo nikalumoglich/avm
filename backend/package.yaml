@@ -86,3 +86,6 @@ tests:
     - wai-extra
     - http-types
     - bytestring
+    - HUnit
+    - call-stack
+    - deepseq
