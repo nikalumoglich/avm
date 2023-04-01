@@ -9,6 +9,7 @@ module Model.User
     , password
     , saveUser
     , getUserByEmail
+    , getUserById
     , User ( User, UserNotFound )
     ) where
 
@@ -41,6 +42,13 @@ saveUser conn user = do
 getUserByEmail :: Connection -> String -> IO User
 getUserByEmail conn email = do
     rows <- query conn "SELECT * FROM users WHERE email = ?" (Only email :: Only String)
+    case rows of
+        [] -> return UserNotFound
+        (userId, name, email', password):_ -> return (User { userId = userId, name = name, email = email', password = password })
+
+getUserById :: Connection -> Int -> IO User
+getUserById conn userId = do
+    rows <- query conn "SELECT * FROM users WHERE id = ?" (Only userId :: Only Int)
     case rows of
         [] -> return UserNotFound
         (userId, name, email', password):_ -> return (User { userId = userId, name = name, email = email', password = password })
