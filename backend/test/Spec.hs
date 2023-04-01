@@ -5,8 +5,10 @@ import qualified PasswordSpec
 import qualified JwtSpec
 import qualified UserSpec
 import qualified SessionSpec
+import qualified PermissionSpec
 import qualified SignUpHandlerSpec
 import qualified SignInHandlerSpec
+import qualified LoggedHandlerSpec
 
 
 createDbConn :: IO Connection
@@ -25,6 +27,8 @@ spec conn = do
 
   UserSpec.suiteSpec conn
   SessionSpec.suiteSpec conn
+  PermissionSpec.suiteSpec conn
 
   SignUpHandlerSpec.suiteSpec conn
   SignInHandlerSpec.suiteSpec
+  LoggedHandlerSpec.suiteSpec conn
