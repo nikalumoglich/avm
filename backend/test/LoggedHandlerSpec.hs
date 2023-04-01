@@ -18,6 +18,7 @@ import Network.HTTP.Types
 import App
 import qualified Data.String as BS
 import qualified Data.Text.Encoding as BSL
+import Control.Monad
 
 shouldRespondWithPredicate :: Control.Monad.IO.Class.MonadIO m => m SResponse -> (TL.Text -> Bool, String) -> m ()
 shouldRespondWithPredicate action (matcher, errorMessage) = do
@@ -62,15 +63,29 @@ suiteSpec dbConn = do
   with (api "avm_test") $ do
     describe "SignUpHandlerSpec" $ do
 
-      it "SignUp return invalid Token" $ do
+      it "LoggedHandler return invalid Token" $ do
         liftIO (cleanDb dbConn)
         post "/loggedHandler" "data" `shouldRespondWith` "Invalid Token"
 
-      it "SignUp return Token" $ do
+      it "LoggedHandler should fail if user does not have permission" $ do
         liftIO (cleanDb dbConn)
         post "/signup" createUserRequest `shouldRespondWith` "User created, id: 1"
         response <- post "/signin" signInRequest
         let token = simpleBody response
-        a <- (Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict token)] loggerHandlerRequest)
-        liftIO (print a)
+        Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict token)] loggerHandlerRequest `shouldRespondWith` "Invalid Token"
+
+      it "LoggedHandler return success" $ do
+        liftIO (cleanDb dbConn)
+        post "/signup" createUserRequest `shouldRespondWith` "User created, id: 1"
+        void (liftIO (execute dbConn "INSERT INTO users_permissions (user_id, permission_id) VALUES (?, ?)" (1 :: Int, 1 :: Int)))
+        response <- post "/signin" signInRequest
+        let token = simpleBody response
         Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict token)] loggerHandlerRequest `shouldRespondWithPredicate` (\response -> "Session" `TL.isPrefixOf` response, "Start of the token does not match expected")
+
+      it "LoggedHandler should fail with invalid json" $ do
+        liftIO (cleanDb dbConn)
+        post "/signup" createUserRequest `shouldRespondWith` "User created, id: 1"
+        void (liftIO (execute dbConn "INSERT INTO users_permissions (user_id, permission_id) VALUES (?, ?)" (1 :: Int, 1 :: Int)))
+        response <- post "/signin" signInRequest
+        let token = simpleBody response
+        Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict token)] "invalid data" `shouldRespondWith` "Invalid JSON"

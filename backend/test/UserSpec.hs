@@ -26,6 +26,12 @@ suiteSpec dbConn = do
     it "getUserByEmail should fail if user does not exist" $ do
       getUserByEmail dbConn "doesnotexist" >>= (`shouldBe` UserNotFound)
 
+    it "getUserById should return" $ do
+      getUserById dbConn 1 >>= (`shouldBe` User 1 "name" "email" "password")
+
+    it "getUserById should fail if user does not exist" $ do
+      getUserById dbConn 5 >>= (`shouldBe` UserNotFound)
+
     it "name should return name" $ do
       name User { userId = 1, name = "name", email = "email", password = "password" } `shouldBe` "name"
 

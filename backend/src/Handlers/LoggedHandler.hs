@@ -16,7 +16,7 @@ import qualified Transport.CreateUserRequest as CreateUserRequest
 
 
 loggedHandler :: String -> Connection -> ActionT TL.Text IO ()
-loggedHandler secret conn = HandlersCommons.handleLoggedJsonRequest secret conn (text "Invalid JSON") (text "Invalid Token") (\user session -> do
+loggedHandler secret conn = HandlersCommons.handleLoggedJsonRequest secret conn "userLevel" (text "Invalid JSON") (text "Invalid Token") (\user session -> do
                 hashedPassword <- Password.hashPassword (CreateUserRequest.password user)
                 let userWithHashedPassword = user { CreateUserRequest.password = TL.unpack hashedPassword }
                 userId <- liftIO (User.saveUser conn userWithHashedPassword)
