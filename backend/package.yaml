@@ -88,4 +88,3 @@ tests:
     - bytestring
     - HUnit
     - call-stack
-    - deepseq

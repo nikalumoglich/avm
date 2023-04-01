@@ -90,7 +90,6 @@ test-suite backend-test
     , bytestring
     , call-stack
     , containers
-    , deepseq
     , hspec
     , hspec-core
     , hspec-wai
