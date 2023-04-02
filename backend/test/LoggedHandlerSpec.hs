@@ -10,14 +10,11 @@ import Database.MySQL.Simple
 import qualified Data.ByteString.Lazy as DBL
 import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Encoding as EL
-import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 import Control.Monad.IO.Class
 import Network.Wai.Test
 import Network.HTTP.Types
 import App
-import qualified Data.String as BS
-import qualified Data.Text.Encoding as BSL
 import Control.Monad
 
 shouldRespondWithPredicate :: Control.Monad.IO.Class.MonadIO m => m SResponse -> (TL.Text -> Bool, String) -> m ()
@@ -60,7 +57,7 @@ loggerHandlerRequest = "{ \
 suiteSpec :: Connection -> Spec
 suiteSpec dbConn = do
 
-  with (api "avm_test") $ do
+  with (api "127.0.0.1" "avm_test" "haskelluser" "haskellpassword" "secret2") $ do
     describe "SignUpHandlerSpec" $ do
 
       it "LoggedHandler return invalid Token" $ do

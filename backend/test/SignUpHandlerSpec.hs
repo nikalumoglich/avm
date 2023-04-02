@@ -20,7 +20,7 @@ validRequest = "{ \
 suiteSpec :: Connection -> Spec
 suiteSpec dbConn = do
 
-  with (api "avm_test") $ do
+  with (api "127.0.0.1" "avm_test" "haskelluser" "haskellpassword" "secret2") $ do
     describe "SignUpHandlerSpec" $ do
 
       it "SignUp return invalid JSON" $ do

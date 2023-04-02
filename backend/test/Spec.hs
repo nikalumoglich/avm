@@ -1,6 +1,7 @@
 import Test.Hspec
 import Database.MySQL.Simple
 
+import qualified AppSpec
 import qualified PasswordSpec
 import qualified JwtSpec
 import qualified UserSpec
@@ -21,6 +22,8 @@ main = do
   hspec (spec conn)
 
 spec conn = do
+
+  AppSpec.suiteSpec
   
   PasswordSpec.suiteSpec
   JwtSpec.suiteSpec

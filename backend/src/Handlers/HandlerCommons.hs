@@ -35,15 +35,18 @@ handleLoggedJsonRequest secret conn requiredPermission invalidJsonErrorHandler i
         Just headerContents -> do
             let token = TL.replace "Bearer " "" headerContents
             let tokenSession = Jwt.decodeSession secret (TL.unpack token)
-            session <- liftIO (Session.getActiveSession conn (Session.userId tokenSession))
-            case session of
+            case tokenSession of
                 Session.SessionNotFound -> invalidTokenErrorHandler
-                session' -> do
-                    user <- liftIO (User.getUserById conn (Session.userId session'))
-                    permissions <- liftIO (Permission.getUserPermissions conn (User.userId user))
-                    (if any (\permission -> Permission.permission permission == requiredPermission) permissions then (do
-                        requestBody <- body
-                        let maybeJson = Aeson.decode requestBody
-                        case maybeJson of
-                            Nothing -> invalidJsonErrorHandler
-                            Just json' -> successHandler json' session') else invalidTokenErrorHandler)
+                sessionFromToken -> do
+                    session <- liftIO (Session.getActiveSession conn (Session.userId sessionFromToken))
+                    case session of
+                        Session.SessionNotFound -> invalidTokenErrorHandler
+                        session' -> do
+                            user <- liftIO (User.getUserById conn (Session.userId session'))
+                            permissions <- liftIO (Permission.getUserPermissions conn (User.userId user))
+                            (if any (\permission -> Permission.permission permission == requiredPermission) permissions then (do
+                                requestBody <- body
+                                let maybeJson = Aeson.decode requestBody
+                                case maybeJson of
+                                    Nothing -> invalidJsonErrorHandler
+                                    Just json' -> successHandler json' session') else invalidTokenErrorHandler)

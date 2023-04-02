@@ -16,8 +16,8 @@ import qualified Model.Session as Session
 import qualified Transport.SignInRequest as SignInRequest
 import qualified Handlers.HandlerCommons as HandlersCommons
 
-signInHandler :: Connection -> ActionT TL.Text IO ()
-signInHandler conn = HandlersCommons.handleJsonRequest (text "Invalid JSON") (\signInRequest -> do
+signInHandler :: String -> Connection -> ActionT TL.Text IO ()
+signInHandler secret conn = HandlersCommons.handleJsonRequest (text "Invalid JSON") (\signInRequest -> do
                 user <- liftIO (User.getUserByEmail conn (SignInRequest.email signInRequest))
                 case user of
                     User.UserNotFound -> text $ TL.pack "User not found"
@@ -25,7 +25,7 @@ signInHandler conn = HandlersCommons.handleJsonRequest (text "Invalid JSON") (\s
                         if Password.comparePassword (User.password user') (SignInRequest.password signInRequest)
                             then do
                                 session <- liftIO (Session.saveSession conn user')
-                                encodedToken <- liftIO (Jwt.encodeSession "secret" session)
+                                encodedToken <- liftIO (Jwt.encodeSession secret session)
                                 text (TL.pack encodedToken)
                             else do
                                 text "Not OK"

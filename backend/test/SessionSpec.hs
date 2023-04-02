@@ -43,7 +43,7 @@ suiteSpec dbConn = do
       shouldBeWithValidationFunction (\actual expected -> do
                                                 actualValue <- actual
                                                 expectedValue <- expected
-                                                return (abs (expiration actualValue - (expiration expectedValue)) <= 5)
+                                                return (abs (expiration actualValue - expiration expectedValue) <= 5)
         ) "Sessions with expiration date within a 11 seconds interval" (getActiveSession dbConn 1) (return Session { sessionId = 1, userId = 1, expiration = round currentTimestamp + 60 })
 
     it "getActiveSession should return session not found" $ do
@@ -54,7 +54,7 @@ suiteSpec dbConn = do
       shouldBeWithValidationFunction (\actual expected -> do
                                                 actualValue <- actual
                                                 expectedValue <- expected
-                                                return (abs ((expiration actualValue) - (expiration expectedValue)) <= 5)
+                                                return (abs (expiration actualValue - expiration expectedValue) <= 5)
         ) "Sessions with expiration date within a 11 seconds interval" (renewSession dbConn (Session { sessionId = 1, userId = 1, expiration = 0 })) (return Session { sessionId = 1, userId = 1, expiration = round currentTimestamp + 60 })
 
     it "renewSession should return session not found" $ do
