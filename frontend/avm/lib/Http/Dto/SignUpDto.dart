@@ -1,8 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'package:avm/Http/Dto/SignUpDto.g.dart';
-
-@JsonSerializable()
 class SignUpDto {
   SignUpDto(this.name, this.email, this.password);
 
@@ -10,7 +5,14 @@ class SignUpDto {
   String email;
   String password;
 
-  factory SignUpDto.fromJson(Map<String, dynamic> json) => _$SignUpDto(json);
+  SignUpDto.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        email = json['email'],
+        password = json['password'];
 
-  Map<String, dynamic> toJson() => _$SignUpDto(this);
+  Map<String, dynamic> toJson() => {
+    'name': name,
+    'email': email,
+    'password': password,
+  };
 }
