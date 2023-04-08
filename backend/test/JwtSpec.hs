@@ -12,7 +12,7 @@ suiteSpec = do
 
     it "Should encode session" $ do
       let session = Session.Session { Session.sessionId = 1, Session.userId = 2, Session.expiration = 3 }
-      encodeSession "secret" session >>= (`shouldBe` "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmF0aW9uIjozLCJzZXNzaW9uSWQiOjEsInVzZXJJZCI6Mn0.3qg2hpfojqECKETvsnCgDsa3LnWRs_yZSusILLywfnQ")
+      encodeSession "secret" session >>= (`shouldBe` (JWTToken "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmF0aW9uIjozLCJzZXNzaW9uSWQiOjEsInVzZXJJZCI6Mn0.3qg2hpfojqECKETvsnCgDsa3LnWRs_yZSusILLywfnQ"))
 
     it "Should decode valid session" $ do
       decodeSession "secret" "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHBpcmF0aW9uIjozLCJzZXNzaW9uSWQiOjEsInVzZXJJZCI6Mn0.3qg2hpfojqECKETvsnCgDsa3LnWRs_yZSusILLywfnQ" `shouldBe` Session.Session { Session.sessionId = 1, Session.userId = 2, Session.expiration = 3 }

@@ -1,10 +1,12 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE DeriveGeneric #-}
 {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
 {-# HLINT ignore "Use <&>" #-}
 
 module Security.Jwt
     ( encodeSession
     , decodeSession
+    , JWTToken (JWTToken)
     ) where
 
 import qualified Data.Text as T
@@ -13,10 +15,17 @@ import Data.Maybe
 import qualified Data.Aeson as Aeson
 import qualified Data.Scientific as Scientific
 import Web.JWT
+import GHC.Generics
 import qualified Model.Session as Session
 
+data JWTToken = JWTToken {
+    token :: String
+} deriving (Generic, Eq, Show)
 
-encodeSession :: String -> Session.Session -> IO String
+instance Aeson.FromJSON JWTToken
+instance Aeson.ToJSON JWTToken
+
+encodeSession :: String -> Session.Session -> IO JWTToken
 encodeSession secret session = do
     let
         cs = mempty { -- mempty returns a default JWTClaimsSet
@@ -28,7 +37,7 @@ encodeSession secret session = do
         }
         key = hmacSecret . T.pack $ secret
     let encoded = encodeSigned key mempty cs
-    return (T.unpack encoded)
+    return (JWTToken (T.unpack encoded))
 
 decodeSession :: String -> String -> Session.Session
 decodeSession secret encodedJwt = fromJust $ decodeSession' secret encodedJwt

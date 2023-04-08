@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       App
+      Errors
       Handlers.HandlerCommons
       Handlers.LoggedHandler
       Handlers.SignInHandler
@@ -36,6 +37,7 @@ library
       Security.Password
       Transport.CreateUserRequest
       Transport.SignInRequest
+      Transport.UserCreatedResponse
   other-modules:
       Paths_backend
   hs-source-dirs:
@@ -46,6 +48,7 @@ library
     , base >=4.7 && <5
     , bytestring
     , containers
+    , http-types
     , jwt
     , mysql-simple
     , password
