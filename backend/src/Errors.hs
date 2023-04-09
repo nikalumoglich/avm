@@ -40,7 +40,7 @@ userNotFoundError = Error {
 
 wrongPasswordError :: Error
 wrongPasswordError = Error {
-    message = "User not found",
+    message = "Wrong password",
     code = 4
 }
 

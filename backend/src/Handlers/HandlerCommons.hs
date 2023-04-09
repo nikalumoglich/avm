@@ -31,16 +31,16 @@ handleLoggedJsonRequest :: Aeson.FromJSON t => String -> Connection -> String ->
 handleLoggedJsonRequest secret conn requiredPermission invalidJsonErrorHandler invalidTokenErrorHandler successHandler = do
     authorizationHeader <- header $ TL.pack "Authorization"
     case authorizationHeader of
-        Nothing -> invalidTokenErrorHandler
+        Nothing -> liftIO (putStrLn "aqui 1") >> invalidTokenErrorHandler
         Just headerContents -> do
             let token = TL.replace "Bearer " "" headerContents
             let tokenSession = Jwt.decodeSession secret (TL.unpack token)
             case tokenSession of
-                Session.SessionNotFound -> invalidTokenErrorHandler
+                Session.SessionNotFound -> liftIO (putStrLn "aqui 2") >> invalidTokenErrorHandler
                 sessionFromToken -> do
                     session <- liftIO (Session.getActiveSession conn (Session.userId sessionFromToken))
                     case session of
-                        Session.SessionNotFound -> invalidTokenErrorHandler
+                        Session.SessionNotFound -> liftIO (putStrLn "aqui 3") >> invalidTokenErrorHandler
                         session' -> do
                             user <- liftIO (User.getUserById conn (Session.userId session'))
                             permissions <- liftIO (Permission.getUserPermissions conn (User.userId user))
@@ -49,4 +49,4 @@ handleLoggedJsonRequest secret conn requiredPermission invalidJsonErrorHandler i
                                 let maybeJson = Aeson.decode requestBody
                                 case maybeJson of
                                     Nothing -> invalidJsonErrorHandler
-                                    Just json' -> successHandler json' session') else invalidTokenErrorHandler)
+                                    Just json' -> successHandler json' session') else liftIO (putStrLn "aqui 4") >> invalidJsonErrorHandler)
