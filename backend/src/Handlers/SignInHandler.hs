@@ -1,11 +1,10 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Handlers.SignInHandler
     ( signInHandler
     ) where
 
 import Web.Scotty
 import Web.Scotty.Internal.Types
+import Network.HTTP.Types.Status
 import Database.MySQL.Simple
 import Control.Monad.IO.Class
 import qualified Data.Text.Lazy as TL
@@ -15,18 +14,20 @@ import qualified Model.User as User
 import qualified Model.Session as Session
 import qualified Transport.SignInRequest as SignInRequest
 import qualified Handlers.HandlerCommons as HandlersCommons
+import Errors
 
 signInHandler :: String -> Connection -> ActionT TL.Text IO ()
-signInHandler secret conn = HandlersCommons.handleJsonRequest (text "Invalid JSON") (\signInRequest -> do
+signInHandler secret conn = HandlersCommons.handleJsonRequest (status badRequest400 >> json invalidJsonError) (\signInRequest -> do
                 user <- liftIO (User.getUserByEmail conn (SignInRequest.email signInRequest))
                 case user of
-                    User.UserNotFound -> text $ TL.pack "User not found"
+                    User.UserNotFound -> status notFound404 >> json userNotFoundError
                     user' ->
                         if Password.comparePassword (User.password user') (SignInRequest.password signInRequest)
                             then do
                                 session <- liftIO (Session.saveSession conn user')
                                 encodedToken <- liftIO (Jwt.encodeSession secret session)
-                                text (TL.pack encodedToken)
+                                json encodedToken
                             else do
-                                text "Not OK"
+                                status unauthorized401
+                                json wrongPasswordError
                 )

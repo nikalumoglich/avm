@@ -49,4 +49,4 @@ handleLoggedJsonRequest secret conn requiredPermission invalidJsonErrorHandler i
                                 let maybeJson = Aeson.decode requestBody
                                 case maybeJson of
                                     Nothing -> invalidJsonErrorHandler
-                                    Just json' -> successHandler json' session') else invalidTokenErrorHandler)
+                                    Just json' -> successHandler json' session') else invalidJsonErrorHandler)

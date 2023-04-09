@@ -6,6 +6,7 @@ module SignInHandlerSpec
 
 import Test.Hspec
 import Test.Hspec.Wai
+import Test.Hspec.Wai.Matcher
 import Network.Wai.Test
 import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Encoding as EL
@@ -45,15 +46,15 @@ suiteSpec = do
     describe "SignInHandlerSpec" $ do
 
       it "SignIn return invalid JSON" $ do
-        post "/signin" "data" `shouldRespondWith` "Invalid JSON"
+        post "/signin" "data" `shouldRespondWith` ResponseMatcher { matchBody = ((bodyEquals . EL.encodeUtf8 . TL.pack) "{\"code\":1,\"message\":\"Invalid Json format\"}"), matchStatus = 400, matchHeaders = [] }
 
       it "SignIn should not login user" $ do
-        post "/signin" invalidLoginRequest `shouldRespondWith` "Not OK"
+        post "/signin" invalidLoginRequest `shouldRespondWith` "{\"code\":4,\"message\":\"Wrong password\"}" { matchStatus = 401 }
 
       it "SignIn should not find user" $ do
-        post "/signin" invalidLoginRequest2 `shouldRespondWith` "User not found"
+        post "/signin" invalidLoginRequest2 `shouldRespondWith` "{\"code\":3,\"message\":\"User not found\"}" { matchStatus = 404 }
 
       it "SignIn should login user" $ do
-        post "/signin" validLoginRequest `shouldRespondWithPredicate` (f, "Start of the token does not match expected") where f response = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9" `TL.isPrefixOf` response
+        post "/signin" validLoginRequest `shouldRespondWithPredicate` (f, "Start of the token does not match expected") where f response = "{\"token\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." `TL.isPrefixOf` response
 
 
