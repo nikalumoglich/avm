@@ -6,6 +6,7 @@
 module Security.Jwt
     ( encodeSession
     , decodeSession
+    , token
     , JWTToken (JWTToken)
     ) where
 

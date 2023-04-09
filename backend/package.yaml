@@ -90,3 +90,5 @@ tests:
     - HUnit
     - call-stack
     - http-types
+    - aeson
+    - utf8-string

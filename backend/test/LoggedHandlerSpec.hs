@@ -11,16 +11,19 @@ import qualified Data.ByteString.Lazy as DBL
 import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Encoding as EL
 import qualified Data.ByteString.Lazy as BSL
+import qualified Data.ByteString.Lazy.UTF8 as BSLU
 import Control.Monad.IO.Class
 import Network.Wai.Test
 import Network.HTTP.Types
 import App
 import Control.Monad
+import Data.Maybe
+import qualified Data.Aeson as Aeson
+import qualified Security.Jwt as Jwt
 
 shouldRespondWithPredicate :: Control.Monad.IO.Class.MonadIO m => m SResponse -> (TL.Text -> Bool, String) -> m ()
 shouldRespondWithPredicate action (matcher, errorMessage) = do
   r <- action
-  liftIO (print r)
   if matcher (EL.decodeUtf8  (simpleBody r))
     then mapM_ (liftIO . expectationFailure) []
     else mapM_ (liftIO . expectationFailure) [errorMessage]
@@ -77,8 +80,9 @@ suiteSpec dbConn = do
         post "/signup" createUserRequest `shouldRespondWith` "{\"id\":1}"
         void (liftIO (execute dbConn "INSERT INTO users_permissions (user_id, permission_id) VALUES (?, ?)" (1 :: Int, 1 :: Int)))
         response <- post "/signin" signInRequest
-        let token = simpleBody response
-        Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict token)] loggerHandlerRequest `shouldRespondWithPredicate` (\response -> "Session" `TL.isPrefixOf` response, "Start of the token does not match expected")
+        let rawToken = simpleBody response
+        let token = fromJust (Aeson.decode rawToken)
+        Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict (BSLU.fromString (Jwt.token token)))] loggerHandlerRequest `shouldRespondWithPredicate` (\response -> "Session" `TL.isPrefixOf` response, "Start of the token does not match expected")
 
       it "LoggedHandler should fail with invalid json" $ do
         liftIO (cleanDb dbConn)

@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.35.1.
+-- This file has been generated from package.yaml by hpack version 0.35.0.
 --
 -- see: https://github.com/sol/hpack
 
@@ -92,6 +92,7 @@ test-suite backend-test
   build-depends:
       HUnit
     , QuickCheck
+    , aeson
     , backend
     , base >=4.7 && <5
     , bytestring
@@ -107,6 +108,7 @@ test-suite backend-test
     , scientific
     , text
     , time
+    , utf8-string
     , wai
     , wai-extra
     , warp
