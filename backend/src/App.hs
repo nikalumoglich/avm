@@ -33,7 +33,7 @@ app shouldStart = do
     port <- getEnvOrDefault "AVM_PORT" "3000"
     version <- getEnvOrDefault "AVM_VERSION" "version not defined"
 
-    putStrLn ("AVM running ou port " ++ port ++ " - version: " ++ version)
+    putStrLn ("AVM running on port " ++ port ++ " - version: " ++ version)
 
     case shouldStart of
         True -> api host database user password secret >>= run (read port)
