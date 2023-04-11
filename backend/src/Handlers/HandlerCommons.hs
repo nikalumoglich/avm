@@ -50,7 +50,7 @@ handleLoggedJsonRequest secret conn requiredPermission invalidJsonErrorHandler i
                                 let maybeJson = Aeson.decode requestBody
                                 case maybeJson of
                                     Nothing -> invalidJsonErrorHandler
-                                    Just json' -> successHandler json' session') else invalidJsonErrorHandler)
+                                    Just json' -> successHandler json' session') else invalidTokenErrorHandler)
 
 handleLoggedRequest :: String -> Connection -> String -> ActionT TL.Text IO b -> ActionT TL.Text IO b -> (Session.Session -> ActionT TL.Text IO b) -> ActionT TL.Text IO b
 handleLoggedRequest secret conn requiredPermission invalidJsonErrorHandler invalidTokenErrorHandler successHandler = do
