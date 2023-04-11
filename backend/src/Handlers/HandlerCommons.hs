@@ -69,4 +69,4 @@ handleLoggedRequest secret conn requiredPermission invalidJsonErrorHandler inval
                         session' -> do
                             user <- liftIO (User.getUserById conn (Session.userId session'))
                             permissions <- liftIO (Permission.getUserPermissions conn (User.userId user))
-                            (if any (\permission -> Permission.permission permission == requiredPermission) permissions then successHandler session' else invalidJsonErrorHandler)
+                            (if any (\permission -> Permission.permission permission == requiredPermission) permissions then successHandler session' else invalidTokenErrorHandler)
