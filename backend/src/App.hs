@@ -8,14 +8,15 @@ module App
 
 import Web.Scotty
 import Database.MySQL.Simple
-import qualified Handlers.SignUpHandler as SignUpHandler
-import qualified Handlers.SignInHandler as SignInHandler
-import qualified Handlers.LoggedHandler as LoggedHandler
 import Network.Wai (Application)
 import Network.Wai.Handler.Warp (run)
 import System.Environment
 import Control.Exception
 import System.IO.Error
+import qualified Handlers.SignUpHandler as SignUpHandler
+import qualified Handlers.SignInHandler as SignInHandler
+import qualified Handlers.LoggedHandler as LoggedHandler
+import qualified Handlers.ProductsHandler as ProductsHandler
 
 getEnvOrDefault :: String -> String -> IO String
 getEnvOrDefault name defaultValue = getEnv name `catch` handleIsDoesNotExistError defaultValue
@@ -50,3 +51,5 @@ api host database user password secret = do
         post "/signin" (SignInHandler.signInHandler secret dbConn)
 
         post "/loggedHandler" (LoggedHandler.loggedHandler secret dbConn)
+
+        get "/products" (ProductsHandler.listProducts secret dbConn)
