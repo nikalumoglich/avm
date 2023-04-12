@@ -68,11 +68,11 @@ suiteSpec dbConn = do
         liftIO (cleanDb dbConn)
         post "/loggedHandler" "data" `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }
 
-      it "LoggedHandler should fail if user does not have permission" $ do
+      it "LoggedHandler should fail with incorrect token" $ do
         liftIO (cleanDb dbConn)
         post "/signup" createUserRequest `shouldRespondWith` "{\"id\":1}"
-        response <- post "/signin" signInRequest
-        let token = simpleBody response
+        _ <- post "/signin" signInRequest
+        let token = "incorrect token"
         Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict token)] loggerHandlerRequest `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }
 
       it "LoggedHandler return success" $ do
@@ -83,6 +83,14 @@ suiteSpec dbConn = do
         let rawToken = simpleBody response
         let token = fromJust (Aeson.decode rawToken)
         Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict (BSLU.fromString (Jwt.token token)))] loggerHandlerRequest `shouldRespondWithPredicate` (\response -> "Session" `TL.isPrefixOf` response, "Start of the token does not match expected")
+
+      it "LoggedHandler should fail because user does not have permission" $ do
+        liftIO (cleanDb dbConn)
+        post "/signup" createUserRequest `shouldRespondWith` "{\"id\":1}"
+        response <- post "/signin" signInRequest
+        let rawToken = simpleBody response
+        let token = fromJust (Aeson.decode rawToken)
+        Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict (BSLU.fromString (Jwt.token token)))] loggerHandlerRequest `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }
 
       it "LoggedHandler should fail with invalid json" $ do
         liftIO (cleanDb dbConn)
