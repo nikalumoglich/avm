@@ -75,7 +75,26 @@ suiteSpec dbConn = do
         let token = "incorrect token"
         Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict token)] loggerHandlerRequest `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }
 
-      it "LoggedHandler return success" $ do
+      it "LoggedHandler should fail if session is not found" $ do
+        liftIO (cleanDb dbConn)
+        post "/signup" createUserRequest `shouldRespondWith` "{\"id\":1}"
+        void (liftIO (execute dbConn "INSERT INTO users_permissions (user_id, permission_id) VALUES (?, ?)" (1 :: Int, 1 :: Int)))
+        response <- post "/signin" signInRequest
+        let rawToken = simpleBody response
+        let token = fromJust (Aeson.decode rawToken)
+        liftIO (execute dbConn "TRUNCATE TABLE sessions" ())
+        Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict (BSLU.fromString (Jwt.token token)))] loggerHandlerRequest `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }
+
+      it "LoggedHandler should fail if Json data is invalid" $ do
+        liftIO (cleanDb dbConn)
+        post "/signup" createUserRequest `shouldRespondWith` "{\"id\":1}"
+        void (liftIO (execute dbConn "INSERT INTO users_permissions (user_id, permission_id) VALUES (?, ?)" (1 :: Int, 1 :: Int)))
+        response <- post "/signin" signInRequest
+        let rawToken = simpleBody response
+        let token = fromJust (Aeson.decode rawToken)
+        Test.Hspec.Wai.request methodPost "/loggedHandler" [("Authorization", "Bearer " <> BSL.toStrict (BSLU.fromString (Jwt.token token)))] "Invalid data" `shouldRespondWith` "{\"code\":1,\"message\":\"Invalid Json format\"}" { matchStatus = 400 }
+
+      it "LoggedHandler should return success" $ do
         liftIO (cleanDb dbConn)
         post "/signup" createUserRequest `shouldRespondWith` "{\"id\":1}"
         void (liftIO (execute dbConn "INSERT INTO users_permissions (user_id, permission_id) VALUES (?, ?)" (1 :: Int, 1 :: Int)))
