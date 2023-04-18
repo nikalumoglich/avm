@@ -14,25 +14,35 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            ElevatedButton(
-              child: const Text('Sign In'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignInScreen()),
-                );
-              },
+            SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                child: const Text('Sign In'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignInScreen()),
+                  );
+                },
+              ),
             ),
-            ElevatedButton(
-              child: const Text('Sign Up'),
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const SignUpScreen()),
-                );
-              },
+            SizedBox(
+              width: 200,
+              child: ElevatedButton(
+                child: const Text('Sign Up'),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const SignUpScreen()),
+                  );
+                },
+              ),
             ),
+            const SizedBox(
+              height: 20,
+            )
           ],
         )
       ),

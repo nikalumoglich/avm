@@ -1,8 +1,10 @@
 import 'dart:convert';
 
+import 'package:avm/Http/HttpError.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
+import 'package:avm/Util/constants.dart' as Constants;
 import 'package:avm/Http/Dto/SignUpDto.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -79,17 +81,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   Future<void> sendData() async {
     SignUpDto signupDto = SignUpDto(nameController.text, emailController.text, passwordController.text);
-    var url = Uri.http('192.168.15.17:3000', '/signup');
+    var url = Uri.http(Constants.apiEndpoint, '/signup');
     var response = await http.post(url, body: jsonEncode(signupDto.toJson()));
-    userCreated(response.body);
+    if (response.statusCode == 200) {
+      userCreated();
+    } else {
+      var error = HttpError.fromJson(json.decode(response.body));
+      showErrorMessage(error.message);
+    }
   }
 
-  void userCreated(String result) {
+  Future<void> userCreated() async {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return const AlertDialog(
+          content: Text('Usuário criado'),
+        );
+      },
+    );
+    FocusManager.instance.primaryFocus?.unfocus();
+    await Future.delayed(const Duration(seconds: 5));
+    Navigator.pop(context);
+    Navigator.pop(context);
+  }
+
+  void showErrorMessage(String errorMessage) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          content: Text('Result: $result'),
+          content: Text(errorMessage),
         );
       },
     );
