@@ -48,6 +48,6 @@ listProducts conn = do
     let products = map (\(productId, name, description, priceFormula) -> Product { productId = productId, name = name, description = description, priceFormula = priceFormula }) rows
     mapM (\product -> do
         dimensions <- Dimension.getDimensionsByProductId conn (productId product)
-        images <- Image.getImagesByDimensionId conn (productId product)
+        images <- Image.getImagesByProductId conn (productId product)
         return product { dimensions = dimensions, images = images }
         ) products
