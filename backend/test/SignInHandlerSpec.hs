@@ -42,7 +42,7 @@ shouldRespondWithPredicate action (matcher, errorMessage) = do
 suiteSpec :: Spec
 suiteSpec = do
 
-  with (api "127.0.0.1" "avm_test" "haskelluser" "haskellpassword" "secret2") $ do
+  with (api "127.0.0.1" "avm_test" "haskelluser" "haskellpassword" "secret2" 60) $ do
     describe "SignInHandlerSpec" $ do
 
       it "SignIn return invalid JSON" $ do

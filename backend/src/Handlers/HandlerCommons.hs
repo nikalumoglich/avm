@@ -28,8 +28,8 @@ handleJsonRequest errorHandler successHandler = do
         Nothing -> errorHandler
         Just json' -> successHandler json'
 
-handleLoggedJsonRequest :: Aeson.FromJSON t => String -> Connection -> String -> ActionT TL.Text IO b -> ActionT TL.Text IO b -> (t -> Session.Session -> ActionT TL.Text IO b) -> ActionT TL.Text IO b
-handleLoggedJsonRequest secret conn requiredPermission invalidJsonErrorHandler invalidTokenErrorHandler successHandler = do
+handleLoggedJsonRequest :: Aeson.FromJSON t => String -> Int -> Connection -> String -> ActionT TL.Text IO b -> ActionT TL.Text IO b -> (t -> Session.Session -> ActionT TL.Text IO b) -> ActionT TL.Text IO b
+handleLoggedJsonRequest secret sessionTime conn requiredPermission invalidJsonErrorHandler invalidTokenErrorHandler successHandler = do
     authorizationHeader <- header $ TL.pack "Authorization"
     case authorizationHeader of
         Nothing -> invalidTokenErrorHandler
@@ -50,10 +50,10 @@ handleLoggedJsonRequest secret conn requiredPermission invalidJsonErrorHandler i
                                 let maybeJson = Aeson.decode requestBody
                                 case maybeJson of
                                     Nothing -> invalidJsonErrorHandler
-                                    Just json' -> successHandler json' session') else invalidTokenErrorHandler)
+                                    Just json' -> liftIO (Session.renewSession conn sessionTime session') >> successHandler json' session') else invalidTokenErrorHandler)
 
-handleLoggedRequest :: String -> Connection -> String -> ActionT TL.Text IO b -> ActionT TL.Text IO b -> (Session.Session -> ActionT TL.Text IO b) -> ActionT TL.Text IO b
-handleLoggedRequest secret conn requiredPermission invalidJsonErrorHandler invalidTokenErrorHandler successHandler = do
+handleLoggedRequest :: String -> Int -> Connection -> String -> ActionT TL.Text IO b -> (Session.Session -> ActionT TL.Text IO b) -> ActionT TL.Text IO b
+handleLoggedRequest secret sessionTime conn requiredPermission invalidTokenErrorHandler successHandler = do
     authorizationHeader <- header $ TL.pack "Authorization"
     case authorizationHeader of
         Nothing -> invalidTokenErrorHandler
@@ -69,4 +69,5 @@ handleLoggedRequest secret conn requiredPermission invalidJsonErrorHandler inval
                         session' -> do
                             user <- liftIO (User.getUserById conn (Session.userId session'))
                             permissions <- liftIO (Permission.getUserPermissions conn (User.userId user))
-                            (if any (\permission -> Permission.permission permission == requiredPermission) permissions then successHandler session' else invalidTokenErrorHandler)
+                            (if any (\permission -> Permission.permission permission == requiredPermission) permissions then 
+                                liftIO (Session.renewSession conn sessionTime session') >> successHandler session' else invalidTokenErrorHandler)

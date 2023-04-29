@@ -36,7 +36,7 @@ suiteSpec dbConn = do
                                                 actualValue <- actual
                                                 expectedValue <- expected
                                                 return (abs (expiration actualValue - expiration expectedValue) <= 5)
-        ) "Sessions with expiration date within a 11 seconds interval" (saveSession dbConn (User.User 1 "name" "email" "password")) (return Session { sessionId = 1, userId = 1, expiration = round currentTimestamp + 60 })
+        ) "Sessions with expiration date within a 11 seconds interval" (saveSession dbConn 60 (User.User 1 "name" "email" "password")) (return Session { sessionId = 1, userId = 1, expiration = round currentTimestamp + 60 })
 
     it "getActiveSession should return session" $ do
       currentTimestamp <- getPOSIXTime
@@ -55,10 +55,10 @@ suiteSpec dbConn = do
                                                 actualValue <- actual
                                                 expectedValue <- expected
                                                 return (abs (expiration actualValue - expiration expectedValue) <= 5)
-        ) "Sessions with expiration date within a 11 seconds interval" (renewSession dbConn (Session { sessionId = 1, userId = 1, expiration = 0 })) (return Session { sessionId = 1, userId = 1, expiration = round currentTimestamp + 60 })
+        ) "Sessions with expiration date within a 11 seconds interval" (renewSession dbConn 60 (Session { sessionId = 1, userId = 1, expiration = 0 })) (return Session { sessionId = 1, userId = 1, expiration = round currentTimestamp + 60 })
 
     it "renewSession should return session not found" $ do
-      renewSession dbConn (Session { sessionId = 2, userId = 1, expiration = 0 }) >>= (`shouldBe` SessionNotFound)
+      renewSession dbConn 60 (Session { sessionId = 2, userId = 1, expiration = 0 }) >>= (`shouldBe` SessionNotFound)
 
     it "show session should show" $ do
       show Session { sessionId = 1, userId = 2, expiration = 3 } `shouldBe` "Session {sessionId = 1, userId = 2, expiration = 3}"

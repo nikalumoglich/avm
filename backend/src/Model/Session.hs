@@ -28,10 +28,10 @@ data Session = Session
 instance Aeson.FromJSON Session
 instance Aeson.ToJSON Session
 
-saveSession :: Connection -> User.User -> IO Session
-saveSession conn user = do
+saveSession :: Connection -> Int -> User.User -> IO Session
+saveSession conn sessionTime user = do
     currentTimestamp <- getPOSIXTime
-    _ <- execute conn "INSERT INTO sessions (user_id, expiration) values (?, ?)" (User.userId user, round (currentTimestamp + 60) :: Int) -- 60 seconds, should parameterize it
+    _ <- execute conn "INSERT INTO sessions (user_id, expiration) values (?, ?)" (User.userId user, round (currentTimestamp + realToFrac sessionTime) :: Int) -- 60 seconds, should parameterize it
     [Only lastReturnedId] <- query_ conn "SELECT LAST_INSERT_ID();"
     return Session { sessionId = lastReturnedId, userId = User.userId user, expiration = round (currentTimestamp + 60) }
 
@@ -42,12 +42,12 @@ getActiveSession conn userId = do
         [] -> return SessionNotFound
         ((sessionId, userId', expiration):_) -> return (Session { sessionId = sessionId, userId = userId', expiration = expiration })
 
-renewSession :: Connection -> Session -> IO Session
-renewSession conn session = do
+renewSession :: Connection -> Int -> Session -> IO Session
+renewSession conn sessionTime session = do
     rows <- query conn "SELECT * FROM sessions WHERE id = ? AND expiration > UNIX_TIMESTAMP() ORDER BY expiration DESC" (Only (sessionId session) :: Only Int)
     case rows of
         [] -> return SessionNotFound
         (sId, userId, expiration):_ -> do
             currentTimestamp <- getPOSIXTime
-            _ <- execute conn "UPDATE sessions SET expiration = ? WHERE id = ?" (round (currentTimestamp + 60) :: Int, sessionId session)
+            _ <- execute conn "UPDATE sessions SET expiration = ? WHERE id = ?" (round (currentTimestamp + realToFrac sessionTime) :: Int, sessionId session)
             return (Session { sessionId = sId, userId = userId, expiration = expiration })

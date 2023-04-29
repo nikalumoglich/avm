@@ -16,15 +16,15 @@ import qualified Transport.SignInRequest as SignInRequest
 import qualified Handlers.HandlerCommons as HandlersCommons
 import Errors
 
-signInHandler :: String -> Connection -> ActionT TL.Text IO ()
-signInHandler secret conn = HandlersCommons.handleJsonRequest (status badRequest400 >> json invalidJsonError) (\signInRequest -> do
+signInHandler :: String -> Int -> Connection -> ActionT TL.Text IO ()
+signInHandler secret sessionTime conn = HandlersCommons.handleJsonRequest (status badRequest400 >> json invalidJsonError) (\signInRequest -> do
                 user <- liftIO (User.getUserByEmail conn (SignInRequest.email signInRequest))
                 case user of
                     User.UserNotFound -> status notFound404 >> json userNotFoundError
                     user' ->
                         if Password.comparePassword (User.password user') (SignInRequest.password signInRequest)
                             then do
-                                session <- liftIO (Session.saveSession conn user')
+                                session <- liftIO (Session.saveSession conn sessionTime user')
                                 encodedToken <- liftIO (Jwt.encodeSession secret session)
                                 json encodedToken
                             else do

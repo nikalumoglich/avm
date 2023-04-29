@@ -12,6 +12,7 @@ import Network.Wai (Application)
 import Network.Wai.Handler.Warp (run)
 import System.Environment
 import Control.Exception
+import Control.Monad
 import System.IO.Error
 import qualified Handlers.SignUpHandler as SignUpHandler
 import qualified Handlers.SignInHandler as SignInHandler
@@ -32,24 +33,24 @@ app shouldStart = do
     password <- getEnvOrDefault "DB_PASSWORD" "haskellpassword"
     secret <- getEnvOrDefault "JWT_SECRET" "secret"
     port <- getEnvOrDefault "AVM_PORT" "3000"
+    sessionTime' <- getEnvOrDefault "SESSION_TIME" "900"
+    let sessionTime = read sessionTime'
     version <- getEnvOrDefault "AVM_VERSION" "version not defined"
 
     putStrLn ("AVM running on port " ++ port ++ " - version: " ++ version)
 
-    case shouldStart of
-        True -> api host database user password secret >>= run (read port)
-        False -> return ()    
+    when shouldStart $ api host database user password secret sessionTime >>= run (read port)
 
-api :: String -> String -> String -> String -> String -> IO Application
-api host database user password secret = do
+api :: String -> String -> String -> String -> String -> Int -> IO Application
+api host database user password secret sessionTime = do
     dbConn <- connect (defaultConnectInfo { connectHost = host, connectUser = user, connectPassword = password, connectDatabase = database })
-    
+
     scottyApp $ do
 
         post "/signup" (SignUpHandler.signUpHandler dbConn)
 
-        post "/signin" (SignInHandler.signInHandler secret dbConn)
+        post "/signin" (SignInHandler.signInHandler secret sessionTime dbConn)
 
-        post "/loggedHandler" (LoggedHandler.loggedHandler secret dbConn)
+        post "/loggedHandler" (LoggedHandler.loggedHandler secret sessionTime dbConn)
 
-        get "/products" (ProductsHandler.listProducts secret dbConn)
+        get "/products" (ProductsHandler.listProducts secret sessionTime dbConn)
