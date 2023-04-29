@@ -1,28 +1,30 @@
-import 'dart:convert';
-
 import 'package:avm/Http/Dto/ImageDto.dart';
+import 'package:avm/Http/Dto/DimensionDto.dart';
 
-class DimensionDto {
-  DimensionDto(this.id, this.images, this.name, this.productId, this.symbol);
+class ProductDto {
+  ProductDto(this.id, this.name, this.description, this.dimensions, this.images, this.priceFormula);
 
   int id;
-  List<ImageDto> images;
   String name;
-  int productId;
-  String symbol;
+  String description;
+  List<DimensionDto> dimensions;
+  List<ImageDto> images;
+  String priceFormula;
 
-  DimensionDto.fromJson(Map<String, dynamic> json)
-      : id = json['dimensionId'],
-        images = List<ImageDto>.from(json['images'].map((model)=> ImageDto.fromJson(model))),
+  ProductDto.fromJson(Map<String, dynamic> json)
+      : id = json['productId'],
         name = json['name'],
-        productId = json['productId'],
-        symbol = json['symbol'];
+        description = json['description'],
+        dimensions = List<DimensionDto>.from(json['dimensions'].map((model)=> DimensionDto.fromJson(model))),
+        images = List<ImageDto>.from(json['images'].map((model)=> ImageDto.fromJson(model))),
+        priceFormula = json['priceFormula'];
 
   Map<String, dynamic> toJson() => {
-    'dimensionId': id,
-    'images': images.map((model) => model.toJson()).toList(),
+    'productId': id,
     'name': name,
-    'productId': productId,
-    'symbol': symbol,
+    'description': description,
+    'dimensions': dimensions.map((model) => model.toJson()).toList(),
+    'images': images.map((model) => model.toJson()).toList(),
+    'priceFormula': priceFormula,
   };
 }

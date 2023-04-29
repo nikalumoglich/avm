@@ -101,9 +101,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       },
     );
     FocusManager.instance.primaryFocus?.unfocus();
-    await Future.delayed(const Duration(seconds: 5));
-    Navigator.pop(context);
-    Navigator.pop(context);
+    //await Future.delayed(const Duration(seconds: 5));
+    //Navigator.pop(context);
+    //Navigator.pop(context);
   }
 
   void showErrorMessage(String errorMessage) {

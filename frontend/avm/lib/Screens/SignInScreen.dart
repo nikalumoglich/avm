@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:avm/Http/Dto/TokenDto.dart';
 import 'package:avm/Http/HttpError.dart';
+import 'package:avm/Screens/ProductsScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -61,7 +62,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 ],
               ),
               ElevatedButton(
-                child: const Text('Sign Up'),
+                child: const Text('Sign In'),
                 onPressed: sendData,
               ),
             ],
@@ -83,24 +84,15 @@ class _SignInScreenState extends State<SignInScreen> {
     }
   }
 
-  Future<void> userLogged(String token) async {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return const AlertDialog(
-          content: Text('Usuário logado'),
-        );
-      },
-    );
+  void userLogged(String token) async {
     FocusManager.instance.primaryFocus?.unfocus();
-    await Future.delayed(const Duration(seconds: 5));
-    Navigator.pop(context);
 
-    // to save token in local storage
     await storage.write(key: 'token', value: token);
 
-    // to get token from local storage
-    //var value = await storage.read(key: 'token');
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const ProductsScreen()),
+    );
   }
 
   void showErrorMessage(String errorMessage) {
