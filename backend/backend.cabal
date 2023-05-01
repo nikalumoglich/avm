@@ -39,6 +39,8 @@ library
       Model.User
       Security.Jwt
       Security.Password
+      Transport.CalculatePriceRequest
+      Transport.CalculatePriceResponse
       Transport.CreateUserRequest
       Transport.SignInRequest
       Transport.UserCreatedResponse
@@ -52,6 +54,8 @@ library
     , base >=4.7 && <5
     , bytestring
     , containers
+    , exceptions
+    , hint
     , http-types
     , jwt
     , mysql-simple
@@ -102,6 +106,8 @@ test-suite backend-test
     , bytestring
     , call-stack
     , containers
+    , exceptions
+    , hint
     , hspec
     , hspec-core
     , hspec-wai

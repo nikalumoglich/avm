@@ -7,6 +7,8 @@ module Model.Product
     , name
     , description
     , priceFormula
+    , dimensions
+    , images
     , getProductById
     , listProducts
     , Product ( Product, ProductNotFound )

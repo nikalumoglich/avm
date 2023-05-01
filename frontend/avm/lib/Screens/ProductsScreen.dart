@@ -11,6 +11,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:avm/Util/constants.dart' as Constants;
 
+import 'ProductViewScreen.dart';
+
 class ProductsScreen extends StatefulWidget {
   const ProductsScreen({super.key});
 
@@ -47,7 +49,6 @@ class _ProductsScreenState extends State<ProductsScreen> {
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
                     return Container(
-                      height: 500,
                       child: ListView.builder(
                         scrollDirection: Axis.vertical,
                         physics: const AlwaysScrollableScrollPhysics(),
@@ -56,7 +57,7 @@ class _ProductsScreenState extends State<ProductsScreen> {
                           ProductDto model = snapshot.data![index];
                           return GestureDetector(
                             onTap: () {
-                              debugPrint('teste produto clicado: ${model.id}');
+                              loadProductView(model);
                             },
                             child: Card(
                               elevation: 5,
@@ -123,5 +124,9 @@ class _ProductsScreenState extends State<ProductsScreen> {
         );
       },
     );
+  }
+
+  void loadProductView(ProductDto product) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProductViewScreen(product)));
   }
 }

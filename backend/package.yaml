@@ -49,6 +49,8 @@ library:
     - wai
     - warp
     - http-types
+    - hint
+    - exceptions
 
 executables:
   backend-exe:
@@ -92,3 +94,5 @@ tests:
     - http-types
     - aeson
     - utf8-string
+    - hint
+    - exceptions
