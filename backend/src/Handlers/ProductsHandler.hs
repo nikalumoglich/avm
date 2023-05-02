@@ -40,7 +40,6 @@ calculatePriceWith formula = do
 generateDimensionIdSymbolMap :: [Dimension.Dimension] -> Map.Map Int T.Text
 generateDimensionIdSymbolMap dimensions = Map.fromList (map (\dimension -> (Dimension.dimensionId dimension, T.pack (Dimension.symbol dimension))) dimensions)
 
-
 replaceSymbolsWithValues :: T.Text -> Map.Map Int T.Text -> [CalculatePriceRequest.DimensionValue] -> T.Text
 replaceSymbolsWithValues formula _ [] = formula
 replaceSymbolsWithValues formula dimensions (value:values) = replaceSymbolsWithValues replaced dimensions values

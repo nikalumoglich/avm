@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:ui';
 
+import 'package:avm/Http/Dto/CalculatePriceResponseDto.dart';
 import 'package:avm/Http/Dto/ProductDto.dart';
 import 'package:avm/Http/Dto/TokenDto.dart';
 import 'package:avm/Http/HttpError.dart';
@@ -10,6 +11,8 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:avm/Util/constants.dart' as Constants;
+
+import '../Http/Dto/CalculatePriceRequestDto.dart';
 
 class ProductViewScreen extends StatefulWidget {
   const ProductViewScreen(this.product, {super.key});
@@ -176,22 +179,22 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
     var token = await storage.read(key: 'token');
 
     var url = Uri.http(Constants.apiEndpoint, '/products/calculatePrice');
-    /*var response = await http
-        .get(url, headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
+    List<DimensionValueDto> values = <DimensionValueDto>[];
+    for(var i = 0; i < product.dimensions.length; i++) {
+      values.add(DimensionValueDto(product.dimensions[i].id, double.parse(dimensionsValuesControllers[i].text)));
+    }
+    CalculatePriceRequestDto request = CalculatePriceRequestDto(product.id, values);
+
+    var response = await http.post(url, body: jsonEncode(request.toJson()), headers: {HttpHeaders.authorizationHeader: 'Bearer $token'});
     if (response.statusCode == 200) {
-      List<ProductDto> products = List<ProductDto>.from(json
-          .decode(response.body)
-          .map((model) => ProductDto.fromJson(model)));
-      return products;
+      var result = CalculatePriceResponseDto.fromJson(json.decode(response.body));
+      setState(() {
+        price = result.value;
+      });
     } else {
       var error = HttpError.fromJson(json.decode(response.body));
       showErrorMessage(error.message);
-      throw Exception('Failed to load product list');
-    }*/
-
-    setState(() {
-      price += 100;
-    });
+    }
   }
 
   void showErrorMessage(String errorMessage) {
