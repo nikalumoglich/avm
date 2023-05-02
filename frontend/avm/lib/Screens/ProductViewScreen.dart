@@ -40,6 +40,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
     for (var i = 0; i < product.dimensions.length; i++) {
       dimensionsValuesControllers.add(TextEditingController());
     }
+    calculatePrice();
   }
 
   @override
@@ -94,7 +95,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                   },
                 ),
               ),
-              const Padding(
+              product.dimensions.isNotEmpty ? const Padding(
                 padding: EdgeInsets.all(15),
                 child: Text(
                   'Dimensões',
@@ -103,9 +104,9 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                     fontWeight: FontWeight.bold,
                     color: Colors.blue,
                   ),
-                ),
-              ),
-              Container(
+                )
+              ) : const SizedBox(),
+              SizedBox(
                 height: 460 * product.dimensions.length.toDouble(),
                 child: ListView.builder(
                   scrollDirection: Axis.vertical,
@@ -121,7 +122,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                               fit: BoxFit.fill),
                           Row(
                             children: [
-                              Text(product.dimensions[index].name),
+                              Text('${product.dimensions[index].name}: '),
                               Expanded(
                                 child: TextField(
                                   controller:
@@ -136,10 +137,13 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
                   },
                 ),
               ),
-              ElevatedButton(
-                child: const Text('Calcular preço'),
-                onPressed: calculatePrice,
-              ),
+              product.dimensions.isNotEmpty ? Padding(
+                padding: const EdgeInsets.all(15),
+                child: ElevatedButton(
+                  onPressed: calculatePrice,
+                  child: const Text('Calcular preço'),
+                ),
+              ) : const SizedBox(),
               Padding(
                 padding: const EdgeInsets.all(15),
                 child: Text(
