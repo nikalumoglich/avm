@@ -58,15 +58,3 @@ suiteSpec dbConn = do
       void (execute dbConn "INSERT INTO users_permissions (user_id, permission_id) VALUES (?, ?)" (userId, 1 :: Int))
       permissions <- getUserPermissions dbConn userId
       head permissions == Permission { permission = "userLevel" } `shouldBe` True
-
-{-
-    it "renewSession should return session not found" $ do
-      renewSession dbConn (Session { sessionId = 2, userId = 1, expiration = 0 }) >>= (`shouldBe` SessionNotFound)
-
-    it "show session should show" $ do
-      show Session { sessionId = 1, userId = 2, expiration = 3 } `shouldBe` "Session {sessionId = 1, userId = 2, expiration = 3}"
-
-    it "getActiveSession should return session not found for expired session" $ do
-      _ <- execute dbConn "UPDATE sessions SET expiration = 0 where 1 = 1" ()
-      getActiveSession dbConn 1 >>= (`shouldBe` SessionNotFound)
-      -}

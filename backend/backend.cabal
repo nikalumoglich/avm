@@ -85,6 +85,8 @@ test-suite backend-test
   main-is: Spec.hs
   other-modules:
       AppSpec
+      DimensionSpec
+      ImageSpec
       JwtSpec
       LoggedHandlerSpec
       PasswordSpec

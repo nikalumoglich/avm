@@ -7,6 +7,7 @@ module Model.Dimension
     , productId
     , name
     , symbol
+    , images
     , getDimensionsByProductId
     , Dimension ( Dimension )
     ) where

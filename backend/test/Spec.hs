@@ -7,6 +7,8 @@ import qualified JwtSpec
 import qualified UserSpec
 import qualified SessionSpec
 import qualified PermissionSpec
+import qualified ImageSpec
+import qualified DimensionSpec
 import qualified SignUpHandlerSpec
 import qualified SignInHandlerSpec
 import qualified LoggedHandlerSpec
@@ -31,6 +33,8 @@ spec conn = do
   UserSpec.suiteSpec conn
   SessionSpec.suiteSpec conn
   PermissionSpec.suiteSpec conn
+  ImageSpec.suiteSpec conn
+  DimensionSpec.suiteSpec conn
 
   SignUpHandlerSpec.suiteSpec conn
   SignInHandlerSpec.suiteSpec
