@@ -12,6 +12,7 @@ import qualified DimensionSpec
 import qualified SignUpHandlerSpec
 import qualified SignInHandlerSpec
 import qualified LoggedHandlerSpec
+import qualified ProductsHandlerSpec
 
 
 createDbConn :: IO Connection
@@ -39,3 +40,4 @@ spec conn = do
   SignUpHandlerSpec.suiteSpec conn
   SignInHandlerSpec.suiteSpec
   LoggedHandlerSpec.suiteSpec conn
+  ProductsHandlerSpec.suiteSpec conn

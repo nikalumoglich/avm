@@ -91,6 +91,7 @@ test-suite backend-test
       LoggedHandlerSpec
       PasswordSpec
       PermissionSpec
+      ProductsHandlerSpec
       SessionSpec
       SignInHandlerSpec
       SignUpHandlerSpec

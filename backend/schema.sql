@@ -44,7 +44,7 @@ CREATE TABLE products (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`name` varchar(100) DEFAULT NULL,
 	`description` varchar(100) DEFAULT NULL,
-	`priceFormula` varchar(100) DEFAULT NULL,
+	`price_formula` varchar(100) DEFAULT NULL,
 	PRIMARY KEY (id)
 )
 ENGINE=InnoDB
