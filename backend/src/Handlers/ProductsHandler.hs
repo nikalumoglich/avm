@@ -60,5 +60,7 @@ calculatePrice secret sessionTime conn = HandlersCommons.handleLoggedJsonRequest
                 let mapOfSymbolsByDimensionId = generateDimensionIdSymbolMap dimensions
                 let replacedFormula = replaceSymbolsWithValues formula mapOfSymbolsByDimensionId (CalculatePriceRequest.dimensionValues calculatePriceRequest)
                 evaluationResult <- liftIO (calculatePriceWith (T.unpack replacedFormula))
+                liftIO (putStrLn "evaluationResult")
+                liftIO (print evaluationResult)
                 json CalculatePriceResponse.CalculatePriceResponse { CalculatePriceResponse.value = evaluationResult }
                 )

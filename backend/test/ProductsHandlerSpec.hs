@@ -25,6 +25,8 @@ import qualified Security.Jwt as Jwt
 shouldRespondWithPredicate :: Control.Monad.IO.Class.MonadIO m => m SResponse -> (TL.Text -> Bool, String) -> m ()
 shouldRespondWithPredicate action (matcher, errorMessage) = do
   r <- action
+  liftIO (putStrLn "response")
+  liftIO (print r)
   if matcher (EL.decodeUtf8  (simpleBody r))
     then mapM_ (liftIO . expectationFailure) []
     else mapM_ (liftIO . expectationFailure) [errorMessage]
@@ -68,8 +70,7 @@ createUser dbConn = do
   let token = fromJust (Aeson.decode rawToken)
   return token
 
-loggedRequest :: DB.ByteString -> Method -> BSLU.ByteString -> WaiSession st SResponse
-loggedRequest token method body = Test.Hspec.Wai.request method "/products" [("Authorization", "Bearer " <> token)] body
+loggedRequest token method path body = Test.Hspec.Wai.request method path [("Authorization", "Bearer " <> token)] body
 
 createUserRequest :: DBL.ByteString
 createUserRequest = "{ \
@@ -87,6 +88,26 @@ signInRequest = "{ \
 productListResponse :: TL.Text
 productListResponse = "[{\"description\":\"just a table\",\"dimensions\":[{\"dimensionId\":1,\"images\":[{\"imageId\":2,\"url\":\"https://tiozao.co/image2.png\"},{\"imageId\":3,\"url\":\"https://tiozao.co/image3.png\"},{\"imageId\":4,\"url\":\"https://tiozao.co/image4.png\"}],\"name\":\"height\",\"productId\":1,\"symbol\":\"{height}\"},{\"dimensionId\":2,\"images\":[],\"name\":\"width\",\"productId\":1,\"symbol\":\"{width}\"},{\"dimensionId\":3,\"images\":[],\"name\":\"depth\",\"productId\":1,\"symbol\":\"{depth}\"}],\"images\":[{\"imageId\":1,\"url\":\"https://tiozao.co/image1.png\"}],\"name\":\"table\",\"priceFormula\":\"{height} * {width} * {depth}\",\"productId\":1,\"tag\":\"Product\"}]"
 
+calculatePriceRequest = "{ \
+\    \"productId\": 1, \
+\    \"dimensionValues\": [ \
+\        { \
+\            \"dimensionId\": 1, \
+\            \"value\": 2.0 \
+\        }, \
+\        { \
+\            \"dimensionId\": 2, \
+\            \"value\": 3.0 \
+\        }, \
+\        { \
+\            \"dimensionId\": 3, \
+\            \"value\": 4.0 \
+\        } \
+\    ] \
+\}"
+
+calculatePriceResponse = "{\"value\":5}"
+
 suiteSpec :: Connection -> Spec
 suiteSpec dbConn = do
 
@@ -101,21 +122,21 @@ suiteSpec dbConn = do
         liftIO (cleanDb dbConn)
         token' <- createUser dbConn
         let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodGet `shouldRespondWithPredicate` (\response -> "[]" == response, "List not empty")
+        loggedRequest token methodGet "/products" "" `shouldRespondWithPredicate` (\response -> "[]" == response, "List not empty")
 
       it "Should return product list" $ do
         liftIO (cleanDb dbConn)
         liftIO (createProduct dbConn)
         token' <- createUser dbConn
         let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodGet `shouldRespondWithPredicate` (\response -> productListResponse == response, "Expected response not fulfilled")
+        loggedRequest token methodGet "/products" "" `shouldRespondWithPredicate` (\response -> productListResponse == response, "Expected response not fulfilled")
 
       it "Should calculate product price" $ do
         liftIO (cleanDb dbConn)
         liftIO (createProduct dbConn)
         token' <- createUser dbConn
         let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodPost `shouldRespondWithPredicate` (\response -> productListResponse == response, "Expected response not fulfilled")
+        loggedRequest token methodPost "/products/calculatePrice" calculatePriceRequest `shouldRespondWithPredicate` (\response -> calculatePriceResponse == response, "Expected response not fulfilled")
 
 {-
       it "LoggedHandler should fail with incorrect token" $ do
