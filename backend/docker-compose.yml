@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+    avm-backend:
+        image: avm-backend:1.0
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${APP_PORT:-3082}:3000'
+        environment:
+            WWWUSER: '${WWWUSER}'
+        volumes:
+            - '.:/var/application'
+        entrypoint: [ "bash", "-c", "ghcid --command 'stack ghci app/Main.hs' --test :main"]
+
