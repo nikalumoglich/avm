@@ -16,12 +16,8 @@ RUN ls
 
 RUN stack build --system-ghc
 
-RUN stack install ghcid
-
 ENV SHELL /bin/bash
 
+EXPOSE 3000
+
 ENTRYPOINT ["tail", "-f", "/dev/null"]
-
-# ENTRYPOINT ["stack", "exec", "backend-exe"]
-
-# ENTRYPOINT ["ghcid", "--command", "'stack ghci app/Main.hs'", "--test", ":main"]

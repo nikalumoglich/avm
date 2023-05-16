@@ -13,18 +13,30 @@ import qualified SignUpHandlerSpec
 import qualified SignInHandlerSpec
 import qualified LoggedHandlerSpec
 import qualified ProductsHandlerSpec
+import System.Environment
+import Control.Exception
+import qualified System.IO.Error
 
+getEnvOrDefault :: String -> String -> IO String
+getEnvOrDefault name defaultValue = getEnv name `catch` handleIsDoesNotExistError defaultValue
 
-createDbConn :: IO Connection
-createDbConn = connect (defaultConnectInfo { connectHost = "127.0.0.1", connectUser = "haskelluser", connectPassword = "haskellpassword", connectDatabase = "avm_test" })
+handleIsDoesNotExistError :: String -> System.IO.Error.IOError -> IO String
+handleIsDoesNotExistError defaultValue _ = return defaultValue
+
+createDbConn :: String -> String -> String -> String -> IO Connection
+createDbConn host user password database = connect (defaultConnectInfo { connectHost = host, connectUser = user, connectPassword = password, connectDatabase = database })
 
 -- get database params from test env
 main :: IO ()
 main = do
-  conn <- createDbConn
-  hspec (spec conn)
+  host <- getEnvOrDefault "DB_HOST" "127.0.0.1"
+  user <- getEnvOrDefault "DB_USER" "haskelluser"
+  password <- getEnvOrDefault "DB_PASSWORD" "haskellpassword"
+  database <- getEnvOrDefault "DB_NAME" "avm"
+  conn <- createDbConn host user password database
+  hspec (spec conn host database user password)
 
-spec conn = do
+spec conn host database user password = do
 
   AppSpec.suiteSpec
   
@@ -37,7 +49,7 @@ spec conn = do
   ImageSpec.suiteSpec conn
   DimensionSpec.suiteSpec conn
 
-  SignUpHandlerSpec.suiteSpec conn
-  SignInHandlerSpec.suiteSpec
-  LoggedHandlerSpec.suiteSpec conn
-  ProductsHandlerSpec.suiteSpec conn
+  SignUpHandlerSpec.suiteSpec conn host database user password
+  SignInHandlerSpec.suiteSpec host database user password
+  LoggedHandlerSpec.suiteSpec conn host database user password
+  ProductsHandlerSpec.suiteSpec conn host database user password

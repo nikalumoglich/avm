@@ -39,10 +39,10 @@ shouldRespondWithPredicate action (matcher, errorMessage) = do
     then mapM_ (liftIO . expectationFailure) []
     else mapM_ (liftIO . expectationFailure) [errorMessage]
 
-suiteSpec :: Spec
-suiteSpec = do
+suiteSpec :: String -> String -> String -> String -> Spec
+suiteSpec host database user password  = do
 
-  with (api "127.0.0.1" "avm_test" "haskelluser" "haskellpassword" "secret2" 60) $ do
+  with (api host database user password "secret2" 60) $ do
     describe "SignInHandlerSpec" $ do
 
       it "SignIn return invalid JSON" $ do

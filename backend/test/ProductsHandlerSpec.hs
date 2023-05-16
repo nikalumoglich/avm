@@ -7,7 +7,6 @@ module ProductsHandlerSpec
 import Test.Hspec
 import Test.Hspec.Wai
 import Database.MySQL.Simple
-import qualified Data.ByteString as DB
 import qualified Data.ByteString.Lazy as DBL
 import qualified Data.Text.Lazy as TL
 import qualified Data.Text.Lazy.Encoding as EL
@@ -104,12 +103,12 @@ calculatePriceRequest = "{ \
 \    ] \
 \}"
 
-calculatePriceResponse = "{\"value\":5}"
+calculatePriceResponse = "{\"value\":24}"
 
-suiteSpec :: Connection -> Spec
-suiteSpec dbConn = do
+suiteSpec :: Connection -> String -> String -> String -> String -> Spec
+suiteSpec dbConn host database user password  = do
 
-  with (api "127.0.0.1" "avm_test" "haskelluser" "haskellpassword" "secret2" 60) $ do
+  with (api host database user password "secret2" 60) $ do
     describe "ProductsHandlerSpec" $ do
 
       it "Products return invalid Token" $ do
@@ -142,3 +141,4 @@ suiteSpec dbConn = do
         token' <- createUser dbConn
         let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
         loggedRequest token methodPost "/products/calculatePrice" calculatePriceRequest `shouldRespondWithPredicate` (\response -> calculatePriceResponse == response, "Expected response not fulfilled")
+        

@@ -1,3 +1,6 @@
 .stack-work/
 .vscode
-frontend/.idea/kotlinc.xml
+.terraform
+.terraform.lock.hcl
+terraform.tfstate
+terraform.tfstate.backup
