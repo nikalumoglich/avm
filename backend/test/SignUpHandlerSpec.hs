@@ -17,10 +17,10 @@ validRequest = "{ \
 \    \"password\": \"somepassword\" \
 \}"
 
-suiteSpec :: Connection -> Spec
-suiteSpec dbConn = do
+suiteSpec :: Connection -> String -> String -> String -> String -> Spec
+suiteSpec dbConn host database user password  = do
 
-  with (api "127.0.0.1" "avm_test" "haskelluser" "haskellpassword" "secret2" 60) $ do
+  with (api host database user password "secret2" 60) $ do
     describe "SignUpHandlerSpec" $ do
 
       it "SignUp return invalid JSON" $ do

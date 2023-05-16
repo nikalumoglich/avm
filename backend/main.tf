@@ -1,0 +1,117 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 4.0"
+    }
+  }
+}
+
+# Configure the AWS Provider
+provider "aws" {
+  region = "sa-east-1"
+}
+
+# Create a VPC
+resource "aws_default_vpc" "default_vpc" {
+}
+
+resource "aws_default_subnet" "default_subnet_a" {
+  # Use your own region here but reference to subnet 1a
+  availability_zone = "sa-east-1a"
+}
+
+resource "aws_default_subnet" "default_subnet_b" {
+  # Use your own region here but reference to subnet 1b
+  availability_zone = "sa-east-1b"
+}
+
+resource "aws_ecr_repository" "avm_ecr_repo" {
+  name = "avm"
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecs_cluster" "my_cluster" {
+  name = "DevCluster" # Name your cluster here
+}
+
+resource "aws_iam_role" "ecsTaskExecutionRole" {
+  name               = "ecsTaskExecutionRole"
+  assume_role_policy = "${data.aws_iam_policy_document.assume_role_policy.json}"
+}
+
+data "aws_iam_policy_document" "assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRole"]
+
+    principals {
+      type        = "Service"
+      identifiers = ["ecs-tasks.amazonaws.com"]
+    }
+  }
+}
+
+resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRole_policy" {
+  role       = "${aws_iam_role.ecsTaskExecutionRole.name}"
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
+}
+
+resource "aws_ecs_task_definition" "avm_task" {
+  family                   = "avm-task" # Name your task
+  container_definitions    = <<DEFINITION
+  [
+    {
+      "name": "avm-task",
+      "image": "${aws_ecr_repository.avm_ecr_repo.repository_url}",
+      "essential": true,
+      "portMappings": [
+        {
+          "containerPort": 3000,
+          "hostPort": 3000
+        }
+      ],
+      "memory": 512,
+      "cpu": 256
+    }
+  ]
+  DEFINITION
+  requires_compatibilities = ["FARGATE"] # use Fargate as the launch type
+  network_mode             = "awsvpc"    # add the AWS VPN network mode as this is required for Fargate
+  memory                   = 512         # Specify the memory the container requires
+  cpu                      = 256         # Specify the CPU the container requires
+  execution_role_arn       = "${aws_iam_role.ecsTaskExecutionRole.arn}"
+}
+
+resource "aws_ecs_service" "avm_service" {
+  name            = "avm-service"     # Name the service
+  cluster         = "${aws_ecs_cluster.my_cluster.id}"   # Reference the created Cluster
+  task_definition = "${aws_ecs_task_definition.avm_task.arn}" # Reference the task that the service will spin up
+  launch_type     = "FARGATE"
+  desired_count   = 1 # Set up the number of containers to 1
+
+  network_configuration {
+    subnets          = ["${aws_default_subnet.default_subnet_a.id}", "${aws_default_subnet.default_subnet_b.id}"]
+    assign_public_ip = true     # Provide the containers with public IPs
+    security_groups  = ["${aws_security_group.service_security_group.id}"] # Set up the security group
+  }
+}
+
+resource "aws_security_group" "service_security_group" {
+  ingress {
+    from_port = 3000
+    to_port   = 3000
+    protocol  = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+
+  egress {
+    from_port   = 3000
+    to_port     = 3000
+    protocol    = "-1"
+    cidr_blocks      = ["0.0.0.0/0"]
+    ipv6_cidr_blocks = ["::/0"]
+  }
+}

@@ -74,13 +74,17 @@ class _SignInScreenState extends State<SignInScreen> {
   Future<void> sendData() async {
     SignInDto signinDto = SignInDto(emailController.text, passwordController.text);
     var url = Uri.http(Constants.apiEndpoint, '/signin');
-    var response = await http.post(url, body: jsonEncode(signinDto.toJson()));
-    if (response.statusCode == 200) {
-      var tokenDto = Token.fromJson(json.decode(response.body));
-      userLogged(tokenDto.token);
-    } else {
-      var error = HttpError.fromJson(json.decode(response.body));
-      showErrorMessage(error.message);
+    try {
+      var response = await http.post(url, body: jsonEncode(signinDto.toJson()));
+      if (response.statusCode == 200) {
+        var tokenDto = Token.fromJson(json.decode(response.body));
+        userLogged(tokenDto.token);
+      } else {
+        var error = HttpError.fromJson(json.decode(response.body));
+        showErrorMessage(error.message);
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 
