@@ -78,6 +78,54 @@ CREATE TABLE dimensions_images (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+CREATE TABLE orders (
+	`id` BIGINT NOT NULL AUTO_INCREMENT,
+	`user_id` BIGINT NOT NULL,
+  	`product_id` BIGINT NOT NULL,
+	`opening_date` DATE,
+	`closing_date` DATE,
+	`price` BIGINT,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE order_interactions (
+	`id` BIGINT NOT NULL AUTO_INCREMENT,
+	`order_id` BIGINT NOT NULL,
+	`text` TEXT
+	`created_at` DATETIME,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE videos (
+	`id` BIGINT NOT NULL AUTO_INCREMENT,
+	`url` varchar(100) DEFAULT NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE order_interactions_images (
+	`id` BIGINT NOT NULL AUTO_INCREMENT,
+	`order_interaction_id` BIGINT NOT NULL,
+	`image_id` BIGINT NOT NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE order_interactions_videos (
+	`id` BIGINT NOT NULL AUTO_INCREMENT,
+	`order_interaction_id` BIGINT NOT NULL,
+	`video_id` BIGINT NOT NULL,
+	PRIMARY KEY (id)
+)
+ENGINE=InnoDB
+DEFAULT CHARSET=utf8mb4;
+
 # ---------------------------------
 
 INSERT INTO permissions (permission) VALUES ('userLevel');
