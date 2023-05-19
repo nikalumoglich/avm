@@ -82,8 +82,8 @@ CREATE TABLE orders (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`user_id` BIGINT NOT NULL,
   	`product_id` BIGINT NOT NULL,
-	`opening_date` DATE,
-	`closing_date` DATE,
+	`opening_date` DATETIME,
+	`closing_date` DATETIME,
 	`price` BIGINT,
 	PRIMARY KEY (id)
 )

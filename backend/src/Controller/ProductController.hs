@@ -1,7 +1,9 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 module Controller.ProductController
-    ( calculatePrice
+    ( dimensionId
+    , value
+    , calculatePrice
     , DimensionValue ( DimensionValue )
     ) where
 
