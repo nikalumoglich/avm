@@ -93,7 +93,7 @@ DEFAULT CHARSET=utf8mb4;
 CREATE TABLE order_interactions (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`order_id` BIGINT NOT NULL,
-	`text` TEXT
+	`text` TEXT,
 	`created_at` DATETIME,
 	PRIMARY KEY (id)
 )

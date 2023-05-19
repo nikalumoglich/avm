@@ -45,6 +45,8 @@ api :: String -> String -> String -> String -> String -> Int -> IO Application
 api host database user password secret sessionTime = do
     dbConn <- connect (defaultConnectInfo { connectHost = host, connectUser = user, connectPassword = password, connectDatabase = database })
 
+    putStrLn ("AVM connected to database at " ++ host)
+
     scottyApp $ do
 
         post "/signup" (SignUpHandler.signUpHandler dbConn)
