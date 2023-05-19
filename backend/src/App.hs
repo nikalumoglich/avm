@@ -18,6 +18,7 @@ import qualified Handlers.SignUpHandler as SignUpHandler
 import qualified Handlers.SignInHandler as SignInHandler
 import qualified Handlers.LoggedHandler as LoggedHandler
 import qualified Handlers.ProductsHandler as ProductsHandler
+import qualified Handlers.OrdersHandler as OrdersHandler
 
 getEnvOrDefault :: String -> String -> IO String
 getEnvOrDefault name defaultValue = getEnv name `catch` handleIsDoesNotExistError defaultValue
@@ -56,4 +57,8 @@ api host database user password secret sessionTime = do
         post "/products/calculatePrice" (ProductsHandler.calculatePrice secret sessionTime dbConn)
 
         get "/products" (ProductsHandler.listProducts secret sessionTime dbConn)
+
+        get "/orders" (OrdersHandler.listOrdersByUser secret sessionTime dbConn)
+
+        post "/orders" (OrdersHandler.createOrder secret sessionTime dbConn)
         

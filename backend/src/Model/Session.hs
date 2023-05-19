@@ -31,7 +31,7 @@ instance Aeson.ToJSON Session
 saveSession :: Connection -> Int -> User.User -> IO Session
 saveSession conn sessionTime user = do
     currentTimestamp <- getPOSIXTime
-    _ <- execute conn "INSERT INTO sessions (user_id, expiration) values (?, ?)" (User.userId user, round (currentTimestamp + realToFrac sessionTime) :: Int) -- 60 seconds, should parameterize it
+    _ <- execute conn "INSERT INTO sessions (user_id, expiration) values (?, ?)" (User.userId user, round (currentTimestamp + realToFrac sessionTime) :: Int)
     [Only lastReturnedId] <- query_ conn "SELECT LAST_INSERT_ID();"
     return Session { sessionId = lastReturnedId, userId = User.userId user, expiration = round (currentTimestamp + 60) }
 

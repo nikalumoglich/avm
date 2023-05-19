@@ -1,19 +1,19 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# OPTIONS_GHC -Wno-incomplete-patterns #-}
 
-module Transport.CalculatePriceRequest
+module Transport.CreateOrderRequest
     ( productId
     , dimensionValues
-    , CalculatePriceRequest ( CalculatePriceRequest )
+    , CreateOrderRequest ( CreateOrderRequest )
     ) where
 
 import GHC.Generics
 import qualified Data.Aeson as Aeson
 import qualified Controller.ProductController as ProductController
 
-data CalculatePriceRequest = CalculatePriceRequest
+data CreateOrderRequest = CreateOrderRequest
   { productId :: Int
   , dimensionValues :: [ProductController.DimensionValue]
   } deriving (Generic)
 
-instance Aeson.FromJSON CalculatePriceRequest
+instance Aeson.FromJSON CreateOrderRequest

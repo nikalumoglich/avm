@@ -25,14 +25,17 @@ source-repository head
 library
   exposed-modules:
       App
+      Controller.ProductController
       Errors
       Handlers.HandlerCommons
       Handlers.LoggedHandler
+      Handlers.OrdersHandler
       Handlers.ProductsHandler
       Handlers.SignInHandler
       Handlers.SignUpHandler
       Model.Dimension
       Model.Image
+      Model.Order
       Model.Permission
       Model.Product
       Model.Session
@@ -41,7 +44,9 @@ library
       Security.Password
       Transport.CalculatePriceRequest
       Transport.CalculatePriceResponse
+      Transport.CreateOrderRequest
       Transport.CreateUserRequest
+      Transport.OrderCreatedResponse
       Transport.SignInRequest
       Transport.UserCreatedResponse
   other-modules:
