@@ -1,5 +1,8 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Handlers.ProductsHandler
-    ( listProducts
+    ( getProduct
+    , listProducts
     , calculatePrice
     ) where
 
@@ -23,6 +26,12 @@ invalidJsonResponse :: ActionT TL.Text IO ()
 invalidJsonResponse = status badRequest400 >> json invalidJsonError
 unauthorizedResponse :: ActionT TL.Text IO ()
 unauthorizedResponse = status unauthorized401 >> json invalidSessionError
+
+getProduct secret sessionTime conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\_ -> do
+    productId <- param "productId"
+    product <- liftIO (Product.getProductById conn productId)
+    json product
+    )
 
 listProducts secret sessionTime conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\_ -> do
                 products <- liftIO (Product.listProducts conn)
