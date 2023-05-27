@@ -47,6 +47,7 @@ library
       Transport.CreateOrderRequest
       Transport.CreateUserRequest
       Transport.OrderCreatedResponse
+      Transport.OrderResponse
       Transport.SignInRequest
       Transport.UserCreatedResponse
   other-modules:

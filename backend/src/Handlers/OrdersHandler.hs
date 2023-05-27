@@ -13,6 +13,7 @@ import qualified Handlers.HandlerCommons as HandlersCommons
 import qualified Model.Order as Order
 import qualified Model.Session as Session
 import qualified Transport.OrderCreatedResponse as OrderCreatedResponse
+import qualified Transport.OrderResponse as OrderResponse
 
 import Errors ( invalidJsonError, invalidSessionError )
 
@@ -23,7 +24,7 @@ unauthorizedResponse = status unauthorized401 >> json invalidSessionError
 
 listOrdersByUser secret sessionTime conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\session -> do
                 orders <- liftIO (Order.listOrdersByUserId conn (Session.userId session))
-                json orders
+                json (map OrderResponse.orderToResponse orders)
                 )
 
 createOrder secret sessionTime conn = HandlersCommons.handleLoggedJsonRequest secret sessionTime conn "userLevel" invalidJsonResponse unauthorizedResponse (\createOrderRequest session -> do
