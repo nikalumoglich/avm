@@ -1,1 +1,1 @@
-const String apiEndpoint = '15.228.69.240:3000';
+const String apiEndpoint = '192.168.15.17:3000';

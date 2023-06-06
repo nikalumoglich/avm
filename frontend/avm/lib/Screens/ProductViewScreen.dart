@@ -55,7 +55,7 @@ class _ProductViewScreenState extends State<ProductViewScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Lista de Produtos'),
+        title: const Text('Visualizar Produto'),
       ),
       body: SingleChildScrollView(
         scrollDirection: Axis.vertical,

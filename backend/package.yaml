@@ -51,6 +51,12 @@ library:
     - http-types
     - hint
     - exceptions
+    - amazonka
+    - amazonka-s3
+    - base
+    - conduit-extra
+    - lens
+    - resourcet
 
 executables:
   backend-exe:

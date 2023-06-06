@@ -25,6 +25,7 @@ source-repository head
 library
   exposed-modules:
       App
+      AWSInfo
       Controller.ProductController
       Errors
       Handlers.HandlerCommons
@@ -56,15 +57,20 @@ library
   ghc-options: -Wall -Wcompat -Widentities -Wincomplete-record-updates -Wincomplete-uni-patterns -Wmissing-export-lists -Wmissing-home-modules -Wpartial-fields -Wredundant-constraints
   build-depends:
       aeson
-    , base >=4.7 && <5
+    , amazonka
+    , amazonka-s3
+    , base
     , bytestring
+    , conduit-extra
     , containers
     , exceptions
     , hint
     , http-types
     , jwt
+    , lens
     , mysql-simple
     , password
+    , resourcet
     , scientific
     , scotty
     , text
