@@ -7,6 +7,7 @@ module Model.Image
     , url
     , getImagesByProductId
     , getImagesByDimensionId
+    , saveImage
     , Image ( Image )
     ) where
 
@@ -35,3 +36,9 @@ getImagesByDimensionId :: Connection -> Int -> IO [Image]
 getImagesByDimensionId conn dimensionId = do
     rows <- query conn "SELECT images.* FROM dimensions INNER JOIN dimensions_images ON dimensions.id = dimensions_images.dimension_id INNER JOIN images ON dimensions_images.image_id = images.id WHERE dimensions.id = ?" (Only dimensionId :: Only Int)
     return (map rowToImage rows)
+
+saveImage :: Connection -> String -> IO Image
+saveImage conn url = do
+    _ <- execute conn "INSERT INTO images (url) values (?)" (Only url)
+    [Only lastReturnedId] <- query_ conn "SELECT LAST_INSERT_ID();"
+    return Image { imageId = lastReturnedId, url = url }

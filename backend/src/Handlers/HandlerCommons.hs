@@ -6,6 +6,7 @@ module Handlers.HandlerCommons
     ( handleJsonRequest
     , handleLoggedJsonRequest
     , handleLoggedRequest
+    , handleLoggedFilesRequest
     ) where
 
 import Web.Scotty
@@ -71,3 +72,24 @@ handleLoggedRequest secret sessionTime conn requiredPermission invalidTokenError
                             permissions <- liftIO (Permission.getUserPermissions conn (User.userId user))
                             (if any (\permission -> Permission.permission permission == requiredPermission) permissions then 
                                 liftIO (Session.renewSession conn sessionTime session') >> successHandler session' else invalidTokenErrorHandler)
+
+handleLoggedFilesRequest :: String -> Int -> Connection -> String -> ActionT TL.Text IO b -> ([File] -> Session.Session -> ActionT TL.Text IO b) -> ActionT TL.Text IO b 
+handleLoggedFilesRequest secret sessionTime conn requiredPermission invalidTokenErrorHandler successHandler = do
+    authorizationHeader <- header $ TL.pack "Authorization"
+    case authorizationHeader of
+        Nothing -> invalidTokenErrorHandler
+        Just headerContents -> do
+            let token = TL.replace "Bearer " "" headerContents
+            let tokenSession = Jwt.decodeSession secret (TL.unpack token)
+            case tokenSession of
+                Session.SessionNotFound -> invalidTokenErrorHandler
+                sessionFromToken -> do
+                    session <- liftIO (Session.getActiveSession conn (Session.userId sessionFromToken))
+                    case session of
+                        Session.SessionNotFound -> invalidTokenErrorHandler
+                        session' -> do
+                            user <- liftIO (User.getUserById conn (Session.userId session'))
+                            permissions <- liftIO (Permission.getUserPermissions conn (User.userId user))
+                            (if any (\permission -> Permission.permission permission == requiredPermission) permissions then (do
+                                requestFiles <- files
+                                liftIO (Session.renewSession conn sessionTime session') >> successHandler requestFiles session') else invalidTokenErrorHandler)

@@ -5,61 +5,64 @@
 
 packages:
 - completed:
-    hackage: amazonka-1.5.0@sha256:313f9cd1c34a44e4ff003d9dda8c787f5318448938f1275ea85f7e5033779c6c,3277
+    hackage: generic-lens-labels-0.1.0.1@sha256:c867321a8e4b3bb1ed2ed7741ec5abcf524e440feaa5ce52389c463523e95a21,1448
     pantry-tree:
-      sha256: fbf05f4c15128c074d32876b5466cdf75db03f31c1a3c9c954ee2cdc3d725ecb
-      size: 992
+      sha256: 7391eded0b235fffea786dfc8d2cfcd9b704940d6f1b670b32b5812d31d88faa
+      size: 283
   original:
-    hackage: amazonka-1.5.0
+    hackage: generic-lens-labels-0.1.0.1
 - completed:
-    hackage: amazonka-core-1.5.0@sha256:522edd87e170dcedb8096f20f1a1a97c12f276e3498eacaba8f522705dda8b91,5106
+    name: amazonka
     pantry-tree:
-      sha256: 644af63f4cd2b7a6e0bf60aa3297562a75e4d1b2b239985c552f329c03789d42
-      size: 3438
+      sha256: 2789ec3422222681e81d7c1b9b9f4f1ccf8dc2bf5d6feb2a9fd8fc249556edbc
+      size: 827
+    sha256: a7b386bbc8c580b1683b69ea406cb66416c2a440d6540fe50be6eff8917c0d31
+    size: 26670949
+    subdir: lib/amazonka
+    url: https://github.com/brendanhay/amazonka/archive/0ccede621e56fb6f240e4850e205cde82d0e4a4b.tar.gz
+    version: '2.0'
   original:
-    hackage: amazonka-core-1.5.0
+    subdir: lib/amazonka
+    url: https://github.com/brendanhay/amazonka/archive/0ccede621e56fb6f240e4850e205cde82d0e4a4b.tar.gz
 - completed:
-    hackage: amazonka-iam-1.5.0@sha256:1d1a6dea272dd4368cb7a4a6b6a984a442cf917e5f28c371c7715fbb0637292c,8511
+    name: amazonka-core
     pantry-tree:
-      sha256: 9cc3bccd0f8435936e614ad4f7c141ff7564fbd539c4d4b64634728dbd5adb03
-      size: 29252
+      sha256: fb1fbbacb9e710de708c1d43399e70ad7c15c3f1b8b2767a7cae96f4a5fc7039
+      size: 3117
+    sha256: a7b386bbc8c580b1683b69ea406cb66416c2a440d6540fe50be6eff8917c0d31
+    size: 26670949
+    subdir: lib/amazonka-core
+    url: https://github.com/brendanhay/amazonka/archive/0ccede621e56fb6f240e4850e205cde82d0e4a4b.tar.gz
+    version: '2.0'
   original:
-    hackage: amazonka-iam-1.5.0
+    subdir: lib/amazonka-core
+    url: https://github.com/brendanhay/amazonka/archive/0ccede621e56fb6f240e4850e205cde82d0e4a4b.tar.gz
 - completed:
-    hackage: amazonka-s3-1.5.0@sha256:a7011c9e1f62b61d8434b41a86becd0ac0638fb8c04fafb30cc1dadbfcd2a490,6271
+    name: amazonka-sts
     pantry-tree:
-      sha256: 54f5464a76d6b6251a99266de0bc65bebab2fce33330261a7685c0e9f4bb688a
-      size: 18147
+      sha256: cab234646c792a272ac2d7011c34fe06902a466900d953c85ffff4e3faaa1378
+      size: 2932
+    sha256: a7b386bbc8c580b1683b69ea406cb66416c2a440d6540fe50be6eff8917c0d31
+    size: 26670949
+    subdir: lib/services/amazonka-sts
+    url: https://github.com/brendanhay/amazonka/archive/0ccede621e56fb6f240e4850e205cde82d0e4a4b.tar.gz
+    version: '2.0'
   original:
-    hackage: amazonka-s3-1.5.0
+    subdir: lib/services/amazonka-sts
+    url: https://github.com/brendanhay/amazonka/archive/0ccede621e56fb6f240e4850e205cde82d0e4a4b.tar.gz
 - completed:
-    hackage: amazonka-sdb-1.5.0@sha256:9bfcb7c29fa2b7e80a5852d8d2807ceab141527c859fa84be06c5eb09f156505,3264
+    name: amazonka-s3
     pantry-tree:
-      sha256: 16ae51ef264afd286ed860dca04f2d16d9ee9849c0e9bc51f3607569f2603567
-      size: 3012
+      sha256: 6a643b1cf63b9fc3da9660d1682231dcea4c4157989ef60a414c7ecf67d2f1b0
+      size: 37921
+    sha256: a7b386bbc8c580b1683b69ea406cb66416c2a440d6540fe50be6eff8917c0d31
+    size: 26670949
+    subdir: lib/services/amazonka-s3
+    url: https://github.com/brendanhay/amazonka/archive/0ccede621e56fb6f240e4850e205cde82d0e4a4b.tar.gz
+    version: '2.0'
   original:
-    hackage: amazonka-sdb-1.5.0
-- completed:
-    hackage: amazonka-ssm-1.5.0@sha256:888d02e2d65256ee117047ad84f2574032c35d6cd51f1e0934a329c2951746f9,7700
-    pantry-tree:
-      sha256: de478e555d4e210ee5c7d232ee2f106f19d27592f7f5610df4b9da45af44a574
-      size: 24499
-  original:
-    hackage: amazonka-ssm-1.5.0
-- completed:
-    hackage: amazonka-sts-1.5.0@sha256:ef1b9d8ba3488777ef937a1466a6faff866b044488ce7269b83d799aa790b1b2,3190
-    pantry-tree:
-      sha256: d547dbbdd797003f8588a7374fcfe154cf0462092cba5e7f830db95bb988e962
-      size: 2470
-  original:
-    hackage: amazonka-sts-1.5.0
-- completed:
-    hackage: aws-easy-0.1.0.0@sha256:5c734c070290d1e123b58481206efdc9b9e24f6a7a6446d4daf0bcf4dbba2e3a,2691
-    pantry-tree:
-      sha256: 1a2df300dc49c49d30bb86cd343db2c4bf0236703a46ef96b7669cba7fdd28be
-      size: 733
-  original:
-    hackage: aws-easy-0.1.0.0
+    subdir: lib/services/amazonka-s3
+    url: https://github.com/brendanhay/amazonka/archive/0ccede621e56fb6f240e4850e205cde82d0e4a4b.tar.gz
 snapshots:
 - completed:
     sha256: 126fa33ceb11f5e85ceb4e86d434756bd9a8439e2e5776d306a15fbc63b01e89

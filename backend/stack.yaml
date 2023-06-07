@@ -41,14 +41,14 @@ packages:
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
 extra-deps:
-- amazonka-1.5.0
-- amazonka-core-1.5.0
-- amazonka-iam-1.5.0
-- amazonka-s3-1.5.0
-- amazonka-sdb-1.5.0
-- amazonka-ssm-1.5.0
-- amazonka-sts-1.5.0
-- aws-easy-0.1.0.0
+- generic-lens-labels-0.1.0.1
+- github: brendanhay/amazonka
+  commit: 0ccede621e56fb6f240e4850e205cde82d0e4a4b
+  subdirs:
+  - lib/amazonka
+  - lib/amazonka-core
+  - lib/services/amazonka-sts
+  - lib/services/amazonka-s3
 
 # Override default flag values for local packages and extra-deps
 # flags: {}

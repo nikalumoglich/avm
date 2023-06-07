@@ -1,3 +1,5 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module App
@@ -19,6 +21,11 @@ import qualified Handlers.SignInHandler as SignInHandler
 import qualified Handlers.LoggedHandler as LoggedHandler
 import qualified Handlers.ProductsHandler as ProductsHandler
 import qualified Handlers.OrdersHandler as OrdersHandler
+import qualified Handlers.ImagesHandler as ImagesHandler
+
+-- s3 test
+
+import Control.Monad.IO.Class
 
 getEnvOrDefault :: String -> String -> IO String
 getEnvOrDefault name defaultValue = getEnv name `catch` handleIsDoesNotExistError defaultValue
@@ -61,4 +68,6 @@ api host database user password secret sessionTime = do
         get "/orders" (OrdersHandler.listOrdersByUser secret sessionTime dbConn)
 
         post "/orders" (OrdersHandler.createOrder secret sessionTime dbConn)
-        
+
+        post "/images" (ImagesHandler.putImages secret sessionTime dbConn)
+      

@@ -54,9 +54,11 @@ library:
     - amazonka
     - amazonka-s3
     - base
+    - conduit
     - conduit-extra
     - lens
     - resourcet
+    - uuid
 
 executables:
   backend-exe:
