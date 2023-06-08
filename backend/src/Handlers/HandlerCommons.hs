@@ -14,6 +14,9 @@ import Web.Scotty.Internal.Types
 import qualified Data.Aeson as Aeson
 import qualified Data.Text.Lazy as TL
 
+import qualified Network.Wai.Parse
+import qualified Data.ByteString.Lazy.UTF8 as BSU
+
 import Database.MySQL.Simple
 import Control.Monad.IO.Class
 import qualified Security.Jwt as Jwt

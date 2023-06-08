@@ -23,10 +23,6 @@ import qualified Handlers.ProductsHandler as ProductsHandler
 import qualified Handlers.OrdersHandler as OrdersHandler
 import qualified Handlers.ImagesHandler as ImagesHandler
 
--- s3 test
-
-import Control.Monad.IO.Class
-
 getEnvOrDefault :: String -> String -> IO String
 getEnvOrDefault name defaultValue = getEnv name `catch` handleIsDoesNotExistError defaultValue
 

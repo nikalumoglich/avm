@@ -1,3 +1,7 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE OverloadedStrings #-}
+
 module Handlers.ImagesHandler
     ( putImages
     ) where
@@ -6,6 +10,7 @@ import Web.Scotty
 import Web.Scotty.Internal.Types
 import Network.HTTP.Types.Status
 import qualified Data.Text.Lazy as TL
+import qualified Data.Text.Encoding as TE
 import Control.Monad.IO.Class
 
 import qualified Handlers.HandlerCommons as HandlersCommons
@@ -17,18 +22,29 @@ import qualified Amazonka.S3 as S3
 import qualified System.IO as IO
 
 import Errors ( invalidSessionError )
-import qualified Data.UUID.V4 as UUID
+import qualified Data.UUID.V4 as V4
+import qualified Data.UUID as UUID
+import qualified Network.Wai.Parse
+import qualified Data.ByteString.Lazy.UTF8 as BLU 
+import qualified Data.ByteString.UTF8 as BSU 
+
+import qualified Data.Time
 
 unauthorizedResponse :: ActionT TL.Text IO ()
 unauthorizedResponse = status unauthorized401 >> json invalidSessionError
 
 
 putImages secret sessionTime conn = HandlersCommons.handleLoggedFilesRequest secret sessionTime conn "userLevel" unauthorizedResponse (\files _ -> do
-                imagesIds <- liftIO (mapM_ (\(contents, _) -> uploadFile conn contents) files)
-                json imagesIds
+                liftIO (putStrLn "Handler fileContents")
+                liftIO (putStrLn (TL.unpack (fst (head files))))
+                imagesIds <- liftIO (mapM (uploadFile conn) files)
+                let iids = map (\x -> BSU.toString x) imagesIds
+                let x = mconcat iids
+                text (TL.pack x)--(TL.pack (show (length files)))
                 )
 
-uploadFile conn fileContents = do
+uploadFile :: p -> (a, Network.Wai.Parse.FileInfo BLU.ByteString) -> IO AWS.ByteString
+uploadFile conn (_, fileInfo) = do
     -- A new Logger to replace the default noop logger is created, with the logger
     -- set to print debug information and errors to stdout:
     logger <- AWS.newLogger AWS.Debug IO.stdout
@@ -46,22 +62,35 @@ uploadFile conn fileContents = do
                 , AWS._envRegion = AWS.SaoPaulo
                 }
 
-    -- The payload (and hash) for the S3 object is retrieved from a FilePath,
-    -- either hashedFile or chunkedFile can be used, with the latter ensuring
-    -- the contents of the file is enumerated exactly once, during send:
-    body <- AWS.chunkedFile AWS.defaultChunkSize "/home/andre/requirements.txt"
+    key <- V4.nextRandom
+    let s3Key = (S3.ObjectKey (UUID.toText key))
 
-    key <- UUID.nextRandom
-
+    let fileContents = BLU.toString (Network.Wai.Parse.fileContent fileInfo)
 
     -- We now run the AWS computation with the overriden logger, performing the
     -- PutObject request. $sel:_envRegion:Env or within can be used to set the
     -- remote AWS Region:
-    response <- AWS.runResourceT $
-        AWS.send env (S3.newPutObject "tiozao-avm" key fileContents)
+    AWS.runResourceT $
+        AWS.send env (S3.newPutObject "tiozao-avm" s3Key (AWS.Hashed (AWS.toHashed fileContents)))
+
+    getPresignedURL AWS.SaoPaulo "tiozao-avm" s3Key
+
+getPresignedURL :: p -> S3.BucketName -> S3.ObjectKey -> IO AWS.ByteString
+getPresignedURL reg b k = do
+    logger <- AWS.newLogger AWS.Debug IO.stdout
+    discover <- AWS.newEnv AWS.Discover
+
+    let env =
+            discover
+                { AWS._envLogger = logger
+                , AWS._envRegion = AWS.SaoPaulo
+                }
+
+    ts <- Data.Time.getCurrentTime
+    AWS.runResourceT $ AWS.presignURL env ts 60 (S3.newGetObject b k)
+
 
     --let url = response
 
-    Image.saveImage conn url
+    -- Image.saveImage conn url
 
-    
