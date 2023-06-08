@@ -82,6 +82,9 @@ signInRequest = "{ \
 \    \"password\": \"somepassword\" \
 \}"
 
+productResponse :: TL.Text
+productResponse = "{\"description\":\"just a table\",\"dimensions\":[{\"dimensionId\":1,\"images\":[{\"imageId\":2,\"url\":\"https://tiozao.co/image2.png\"},{\"imageId\":3,\"url\":\"https://tiozao.co/image3.png\"},{\"imageId\":4,\"url\":\"https://tiozao.co/image4.png\"}],\"name\":\"height\",\"productId\":1,\"symbol\":\"{height}\"},{\"dimensionId\":2,\"images\":[],\"name\":\"width\",\"productId\":1,\"symbol\":\"{width}\"},{\"dimensionId\":3,\"images\":[],\"name\":\"depth\",\"productId\":1,\"symbol\":\"{depth}\"}],\"images\":[{\"imageId\":1,\"url\":\"https://tiozao.co/image1.png\"}],\"name\":\"table\",\"priceFormula\":\"{height} * {width} * {depth}\",\"productId\":1,\"tag\":\"Product\"}"
+
 productListResponse :: TL.Text
 productListResponse = "[{\"description\":\"just a table\",\"dimensions\":[{\"dimensionId\":1,\"images\":[{\"imageId\":2,\"url\":\"https://tiozao.co/image2.png\"},{\"imageId\":3,\"url\":\"https://tiozao.co/image3.png\"},{\"imageId\":4,\"url\":\"https://tiozao.co/image4.png\"}],\"name\":\"height\",\"productId\":1,\"symbol\":\"{height}\"},{\"dimensionId\":2,\"images\":[],\"name\":\"width\",\"productId\":1,\"symbol\":\"{width}\"},{\"dimensionId\":3,\"images\":[],\"name\":\"depth\",\"productId\":1,\"symbol\":\"{depth}\"}],\"images\":[{\"imageId\":1,\"url\":\"https://tiozao.co/image1.png\"}],\"name\":\"table\",\"priceFormula\":\"{height} * {width} * {depth}\",\"productId\":1,\"tag\":\"Product\"}]"
 
@@ -121,6 +124,13 @@ suiteSpec dbConn host database user password  = do
         let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
         loggedRequest token methodGet "/products" "" `shouldRespondWithPredicate` (\response -> "[]" == response, "List not empty")
 
+      it "Should return product" $ do
+        liftIO (cleanDb dbConn)
+        liftIO (createProduct dbConn)
+        token' <- createUser dbConn
+        let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
+        loggedRequest token methodGet "/products/1" "" `shouldRespondWithPredicate` (\response -> productResponse == response, "Expected response not fulfilled")
+        
       it "Should return product list" $ do
         liftIO (cleanDb dbConn)
         liftIO (createProduct dbConn)

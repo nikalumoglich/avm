@@ -15,7 +15,7 @@ import qualified Data.Aeson as Aeson
 data Error = Error
   { message :: String
   , code :: Int
-  } deriving (Show, Eq, Generic)
+  } deriving (Show, Generic)
 
 instance Aeson.FromJSON Error
 instance Aeson.ToJSON Error

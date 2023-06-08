@@ -57,6 +57,8 @@ api host database user password secret sessionTime = do
 
         post "/loggedHandler" (LoggedHandler.loggedHandler secret sessionTime dbConn)
 
+        get "/products/:productId" (ProductsHandler.getProduct secret sessionTime dbConn)
+
         post "/products/calculatePrice" (ProductsHandler.calculatePrice secret sessionTime dbConn)
 
         get "/products" (ProductsHandler.listProducts secret sessionTime dbConn)
