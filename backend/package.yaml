@@ -51,6 +51,16 @@ library:
     - http-types
     - hint
     - exceptions
+    - amazonka
+    - amazonka-s3
+    - base
+    - conduit
+    - conduit-extra
+    - lens
+    - resourcet
+    - uuid
+    - wai-extra
+    - utf8-string
 
 executables:
   backend-exe:
