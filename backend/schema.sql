@@ -54,7 +54,7 @@ DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE images (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
-	`url` varchar(100) DEFAULT NULL,
+	`key` varchar(100) DEFAULT NULL,
 	PRIMARY KEY (id)
 )
 ENGINE=InnoDB
@@ -113,7 +113,7 @@ DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE videos (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
-	`url` varchar(100) DEFAULT NULL,
+	`key` varchar(100) DEFAULT NULL,
 	PRIMARY KEY (id)
 )
 ENGINE=InnoDB
@@ -152,11 +152,11 @@ INSERT INTO dimensions_images (dimension_id,image_id) VALUES
 	 (2,3),
 	 (3,4);
 
-INSERT INTO images (url) VALUES
-	 ('https://imgs.casasbahia.com.br/1535779538/1xg.jpg'),
-	 ('https://imgs.casasbahia.com.br/1535779539/1xg.jpg'),
-	 ('https://imgs.casasbahia.com.br/1535779540/1xg.jpg'),
-	 ('https://imgs.casasbahia.com.br/1535779531/1xg.jpg');
+INSERT INTO images (`key`) VALUES
+	 ('image1.jpg'),
+	 ('image2.jpg'),
+	 ('image3.jpg'),
+	 ('image4.jpg');
 
 INSERT INTO products (name,description,price_formula) VALUES
 	 ('sofa','descrição do sofá','(100 + {altura} * 3) + {largura} * {profundidade} + 100'),
