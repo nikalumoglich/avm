@@ -27,19 +27,19 @@ invalidJsonResponse = status badRequest400 >> json invalidJsonError
 unauthorizedResponse :: ActionT TL.Text IO ()
 unauthorizedResponse = status unauthorized401 >> json invalidSessionError
 
-getProduct secret sessionTime conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\_ -> do
+getProduct secret sessionTime bucket conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\_ -> do
     productId <- param "productId"
-    product <- liftIO (Product.getProductById conn productId)
+    product <- liftIO (Product.getProductById conn bucket productId)
     json product
     )
 
-listProducts secret sessionTime conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\_ -> do
-                products <- liftIO (Product.listProducts conn)
+listProducts secret sessionTime bucket conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\_ -> do
+                products <- liftIO (Product.listProducts conn bucket)
                 json products
                 )
 
-calculatePrice secret sessionTime conn = HandlersCommons.handleLoggedJsonRequest secret sessionTime conn "userLevel" invalidJsonResponse unauthorizedResponse (\calculatePriceRequest _ -> do
-                product <- liftIO (Product.getProductById conn (CalculatePriceRequest.productId calculatePriceRequest))
+calculatePrice secret sessionTime bucket conn = HandlersCommons.handleLoggedJsonRequest secret sessionTime conn "userLevel" invalidJsonResponse unauthorizedResponse (\calculatePriceRequest _ -> do
+                product <- liftIO (Product.getProductById conn bucket (CalculatePriceRequest.productId calculatePriceRequest))
                 value <- ProductController.calculatePrice product (CalculatePriceRequest.dimensionValues calculatePriceRequest)
                 json CalculatePriceResponse.CalculatePriceResponse { CalculatePriceResponse.value = value }
                 )

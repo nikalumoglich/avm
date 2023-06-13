@@ -21,6 +21,7 @@ data OrderResponse = OrderResponse
   , closingDate :: Maybe UTCTime
   , price :: Int
   , dimensions :: [Order.OrderDimension]
+  , interactions :: [Order.OrderInteractions]
   }
   deriving (Show, Eq, Generic)
 
@@ -34,5 +35,6 @@ orderToResponse order = OrderResponse {
   openingDate = Order.openingDate order,
   closingDate = Order.closingDate order,
   price = Order.price order,
-  dimensions = Order.dimensions order
+  dimensions = Order.dimensions order,
+  interactions = Order.interactions order
   }

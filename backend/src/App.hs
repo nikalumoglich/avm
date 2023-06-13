@@ -39,14 +39,15 @@ app shouldStart = do
     port <- getEnvOrDefault "AVM_PORT" "3000"
     sessionTime' <- getEnvOrDefault "SESSION_TIME" "900"
     let sessionTime = read sessionTime'
+    bucket <- getEnvOrDefault "AWS_S3_BUCKET" "tiozao-avm"
     version <- getEnvOrDefault "AVM_VERSION" "version not defined"
 
     putStrLn ("AVM running on port " ++ port ++ " - version: " ++ version)
 
-    when shouldStart $ api host database user password secret sessionTime >>= run (read port)
+    when shouldStart $ api host database user password secret sessionTime bucket >>= run (read port)
 
-api :: String -> String -> String -> String -> String -> Int -> IO Application
-api host database user password secret sessionTime = do
+api :: String -> String -> String -> String -> String -> Int -> String -> IO Application
+api host database user password secret sessionTime bucket = do
     dbConn <- connect (defaultConnectInfo { connectHost = host, connectUser = user, connectPassword = password, connectDatabase = database })
 
     scottyApp $ do
@@ -57,15 +58,17 @@ api host database user password secret sessionTime = do
 
         post "/loggedHandler" (LoggedHandler.loggedHandler secret sessionTime dbConn)
 
-        get "/products/:productId" (ProductsHandler.getProduct secret sessionTime dbConn)
+        get "/products/:productId" (ProductsHandler.getProduct secret sessionTime bucket dbConn)
 
-        post "/products/calculatePrice" (ProductsHandler.calculatePrice secret sessionTime dbConn)
+        post "/products/calculatePrice" (ProductsHandler.calculatePrice secret sessionTime bucket dbConn)
 
-        get "/products" (ProductsHandler.listProducts secret sessionTime dbConn)
+        get "/products" (ProductsHandler.listProducts secret sessionTime bucket dbConn)
 
-        get "/orders" (OrdersHandler.listOrdersByUser secret sessionTime dbConn)
+        get "/orders" (OrdersHandler.listOrdersByUser secret sessionTime bucket dbConn)
 
-        post "/orders" (OrdersHandler.createOrder secret sessionTime dbConn)
+        post "/orders" (OrdersHandler.createOrder secret sessionTime bucket dbConn)
 
-        post "/images" (ImagesHandler.putImages secret sessionTime dbConn)
+        post "/orders/interactions" (OrdersHandler.createOrderInteraction secret sessionTime dbConn)
+
+        post "/images" (ImagesHandler.putImages secret sessionTime bucket dbConn)
       

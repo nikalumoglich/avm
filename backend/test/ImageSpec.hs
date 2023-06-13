@@ -23,7 +23,7 @@ suiteSpec dbConn = do
 
     it "should get images by product" $ do
       cleanDb dbConn
-      void (execute dbConn "INSERT INTO images (url) VALUES ('http://imageurl.com')" ())
+      void (execute dbConn "INSERT INTO images (`key`) VALUES ('http://imageurl.com')" ())
       void (execute dbConn "INSERT INTO products_images (product_id, image_id) VALUES (1, 1)" ())
       void (execute dbConn "INSERT INTO products () VALUES ()" ())
       images <- getImagesByProductId dbConn 1
@@ -31,7 +31,7 @@ suiteSpec dbConn = do
 
     it "should get images by dimension" $ do
       cleanDb dbConn
-      void (execute dbConn "INSERT INTO images (url) VALUES ('http://imageurl.com')" ())
+      void (execute dbConn "INSERT INTO images (`key`) VALUES ('http://imageurl.com')" ())
       void (execute dbConn "INSERT INTO dimensions_images (dimension_id, image_id) VALUES (1, 1)" ())
       void (execute dbConn "INSERT INTO dimensions () VALUES ()" ())
       images <- getImagesByDimensionId dbConn 1
@@ -39,7 +39,7 @@ suiteSpec dbConn = do
 
     it "should show image" $ do
       cleanDb dbConn
-      void (execute dbConn "INSERT INTO images (url) VALUES ('http://imageurl.com')" ())
+      void (execute dbConn "INSERT INTO images (`key`) VALUES ('http://imageurl.com')" ())
       void (execute dbConn "INSERT INTO dimensions_images (dimension_id, image_id) VALUES (1, 1)" ())
       void (execute dbConn "INSERT INTO dimensions () VALUES ()" ())
       images <- getImagesByDimensionId dbConn 1
