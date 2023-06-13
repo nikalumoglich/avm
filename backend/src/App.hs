@@ -68,5 +68,7 @@ api host database user password secret sessionTime bucket = do
 
         post "/orders" (OrdersHandler.createOrder secret sessionTime bucket dbConn)
 
+        post "/orders/interactions" (OrdersHandler.createOrderInteraction secret sessionTime dbConn)
+
         post "/images" (ImagesHandler.putImages secret sessionTime bucket dbConn)
       

@@ -46,9 +46,11 @@ library
       Security.Password
       Transport.CalculatePriceRequest
       Transport.CalculatePriceResponse
+      Transport.CreateOrderInteractionRequest
       Transport.CreateOrderRequest
       Transport.CreateUserRequest
       Transport.OrderCreatedResponse
+      Transport.OrderInteractionCreatedResponse
       Transport.OrderResponse
       Transport.SignInRequest
       Transport.UserCreatedResponse

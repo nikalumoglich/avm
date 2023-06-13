@@ -7,6 +7,7 @@ module Model.Image
     , url
     , getImagesByProductId
     , getImagesByDimensionId
+    , getImagesById
     , saveImage
     , Image ( Image )
     ) where
@@ -41,6 +42,11 @@ getImagesByDimensionId :: Connection -> String -> Int -> IO [Image]
 getImagesByDimensionId conn bucket dimensionId = do
     rows <- query conn "SELECT images.* FROM dimensions INNER JOIN dimensions_images ON dimensions.id = dimensions_images.dimension_id INNER JOIN images ON dimensions_images.image_id = images.id WHERE dimensions.id = ?" (Only dimensionId :: Only Int)
     mapM (rowToImage bucket) rows
+
+getImagesById :: Connection -> String -> Int -> IO Image
+getImagesById conn bucket imageId = do
+    [(imageId', key)] <- query conn "SELECT images.* FROM images WHERE id = ?" (Only imageId :: Only Int)
+    rowToImage bucket (imageId', key)
 
 saveImage :: Connection -> String -> String -> IO Image
 saveImage conn bucket key = do

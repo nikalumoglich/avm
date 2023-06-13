@@ -1,6 +1,7 @@
 module Handlers.OrdersHandler
     ( listOrdersByUser
     , createOrder
+    , createOrderInteraction
     ) where
 
 import Web.Scotty
@@ -14,6 +15,7 @@ import qualified Model.Order as Order
 import qualified Model.Session as Session
 import qualified Transport.OrderCreatedResponse as OrderCreatedResponse
 import qualified Transport.OrderResponse as OrderResponse
+import qualified Transport.OrderInteractionCreatedResponse as OrderInteractionCreatedResponse
 
 import Errors ( invalidJsonError, invalidSessionError )
 
@@ -30,4 +32,10 @@ listOrdersByUser secret sessionTime bucket conn = HandlersCommons.handleLoggedRe
 createOrder secret sessionTime bucket conn = HandlersCommons.handleLoggedJsonRequest secret sessionTime conn "userLevel" invalidJsonResponse unauthorizedResponse (\createOrderRequest session -> do
                 orderId <- liftIO (Order.saveOrder conn bucket (Session.userId session) createOrderRequest)
                 json OrderCreatedResponse.OrderCreatedResponse { OrderCreatedResponse.orderId = orderId }
+                )
+
+createOrderInteraction secret sessionTime conn = HandlersCommons.handleLoggedJsonRequest secret sessionTime conn "userLevel" invalidJsonResponse unauthorizedResponse (\createOrderInteractionRequest session -> do
+                let authorId = Session.userId session
+                orderInteractionId <-liftIO (Order.saveOrderInteraction conn authorId createOrderInteractionRequest)
+                json OrderInteractionCreatedResponse.OrderInteractionCreatedResponse { OrderInteractionCreatedResponse.orderInteractionId = orderInteractionId }
                 )
