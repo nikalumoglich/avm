@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `id` BIGINT NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
@@ -6,6 +7,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `sessions`;
 CREATE TABLE sessions (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`user_id` BIGINT UNSIGNED NULL,
@@ -15,6 +17,7 @@ CREATE TABLE sessions (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `permissions`;
 CREATE TABLE permissions (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`permission` varchar(100) DEFAULT NULL,
@@ -23,6 +26,7 @@ CREATE TABLE permissions (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `users_permissions`;
 CREATE TABLE users_permissions (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`user_id` BIGINT UNSIGNED NULL,
@@ -32,6 +36,7 @@ CREATE TABLE users_permissions (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `products`;
 CREATE TABLE products (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`name` varchar(100) DEFAULT NULL,
@@ -42,6 +47,7 @@ CREATE TABLE products (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `dimensions`;
 CREATE TABLE dimensions (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`product_id` BIGINT UNSIGNED NULL,
@@ -52,6 +58,7 @@ CREATE TABLE dimensions (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `images`;
 CREATE TABLE images (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`key` varchar(100) DEFAULT NULL,
@@ -60,6 +67,7 @@ CREATE TABLE images (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `products_images`;
 CREATE TABLE products_images (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`product_id` BIGINT UNSIGNED NULL,
@@ -69,6 +77,7 @@ CREATE TABLE products_images (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `dimensions_images`;
 CREATE TABLE dimensions_images (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`dimension_id` BIGINT UNSIGNED NULL,
@@ -78,6 +87,7 @@ CREATE TABLE dimensions_images (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `orders`;
 CREATE TABLE orders (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`user_id` BIGINT NOT NULL,
@@ -90,6 +100,7 @@ CREATE TABLE orders (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `orders_dimensions`;
 CREATE TABLE orders_dimensions (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`order_id` BIGINT NOT NULL,
@@ -119,6 +130,7 @@ CREATE TABLE videos (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `order_interactions_images`;
 CREATE TABLE order_interactions_images (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`order_interaction_id` BIGINT NOT NULL,
@@ -128,6 +140,7 @@ CREATE TABLE order_interactions_images (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `order_interactions_videos`;
 CREATE TABLE order_interactions_videos (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`order_interaction_id` BIGINT NOT NULL,
