@@ -58,10 +58,10 @@ loggerHandlerRequest = "{ \
 \    \"password\": \"somepassword\" \
 \}"
 
-suiteSpec :: Connection -> String -> String -> String -> String -> Spec
-suiteSpec dbConn host database user password  = do
+suiteSpec :: Connection -> String -> String -> String -> String -> String -> Spec
+suiteSpec dbConn host database user password bucket = do
 
-  with (api host database user password "secret2" 60) $ do
+  with (api host database user password "secret2" 60 bucket) $ do
     describe "LoggedHandlerSpec" $ do
 
       it "LoggedHandler return invalid Token" $ do

@@ -106,3 +106,4 @@ tests:
     - utf8-string
     - hint
     - exceptions
+    - pcre2

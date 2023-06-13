@@ -33,11 +33,11 @@ main = do
   user <- getEnvOrDefault "DB_USER" "haskelluser"
   password <- getEnvOrDefault "DB_PASSWORD" "haskellpassword"
   database <- getEnvOrDefault "DB_NAME" "avm"
+  bucket <- getEnvOrDefault "AWS_S3_BUCKET" "tiozao-avm"
   conn <- createDbConn host user password database
-  hspec (spec conn host database user password)
+  hspec (spec conn host database user password bucket)
 
-spec conn host database user password = do
-
+spec conn host database user password bucket = do
   AppSpec.suiteSpec
   
   PasswordSpec.suiteSpec
@@ -46,10 +46,10 @@ spec conn host database user password = do
   UserSpec.suiteSpec conn
   SessionSpec.suiteSpec conn
   PermissionSpec.suiteSpec conn
-  ImageSpec.suiteSpec conn
-  DimensionSpec.suiteSpec conn
+  ImageSpec.suiteSpec conn bucket
+  DimensionSpec.suiteSpec conn bucket
 
-  SignUpHandlerSpec.suiteSpec conn host database user password
-  SignInHandlerSpec.suiteSpec host database user password
-  LoggedHandlerSpec.suiteSpec conn host database user password
-  ProductsHandlerSpec.suiteSpec conn host database user password
+  SignUpHandlerSpec.suiteSpec conn host database user password bucket
+  SignInHandlerSpec.suiteSpec host database user password bucket
+  LoggedHandlerSpec.suiteSpec conn host database user password bucket
+  ProductsHandlerSpec.suiteSpec conn host database user password bucket

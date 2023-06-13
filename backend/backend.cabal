@@ -137,6 +137,7 @@ test-suite backend-test
     , http-types
     , jwt
     , mysql-simple
+    , pcre2
     , scientific
     , text
     , time
