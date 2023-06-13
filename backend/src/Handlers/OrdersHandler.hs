@@ -22,12 +22,12 @@ invalidJsonResponse = status badRequest400 >> json invalidJsonError
 unauthorizedResponse :: ActionT TL.Text IO ()
 unauthorizedResponse = status unauthorized401 >> json invalidSessionError
 
-listOrdersByUser secret sessionTime conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\session -> do
-                orders <- liftIO (Order.listOrdersByUserId conn (Session.userId session))
+listOrdersByUser secret sessionTime bucket conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\session -> do
+                orders <- liftIO (Order.listOrdersByUserId conn bucket (Session.userId session))
                 json (map OrderResponse.orderToResponse orders)
                 )
 
-createOrder secret sessionTime conn = HandlersCommons.handleLoggedJsonRequest secret sessionTime conn "userLevel" invalidJsonResponse unauthorizedResponse (\createOrderRequest session -> do
-                orderId <- liftIO (Order.saveOrder conn (Session.userId session) createOrderRequest)
+createOrder secret sessionTime bucket conn = HandlersCommons.handleLoggedJsonRequest secret sessionTime conn "userLevel" invalidJsonResponse unauthorizedResponse (\createOrderRequest session -> do
+                orderId <- liftIO (Order.saveOrder conn bucket (Session.userId session) createOrderRequest)
                 json OrderCreatedResponse.OrderCreatedResponse { OrderCreatedResponse.orderId = orderId }
                 )

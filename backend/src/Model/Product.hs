@@ -33,23 +33,23 @@ data Product = Product
 instance Aeson.FromJSON Product
 instance Aeson.ToJSON Product
 
-getProductById :: Connection -> Int -> IO Product
-getProductById conn productId' = do
+getProductById :: Connection -> String -> Int -> IO Product
+getProductById conn bucket productId' = do
     rows <- query conn "SELECT * FROM products WHERE id = ?" (Only productId' :: Only Int)
     case rows of
         [] -> return ProductNotFound
         (productId', name, description, priceFormula):_ -> do
             let product = Product { productId = productId', name = name, description = description, priceFormula = priceFormula }
-            dimensions <- Dimension.getDimensionsByProductId conn (productId product)
-            images <- Image.getImagesByProductId conn (productId product)
+            dimensions <- Dimension.getDimensionsByProductId conn bucket (productId product)
+            images <- Image.getImagesByProductId conn bucket (productId product)
             return (product { dimensions = dimensions, images = images })
 
-listProducts :: Connection -> IO [Product]
-listProducts conn = do
+listProducts :: Connection -> String -> IO [Product]
+listProducts conn bucket = do
     rows <- query_ conn "SELECT * FROM products"
     let products = map (\(productId, name, description, priceFormula) -> Product { productId = productId, name = name, description = description, priceFormula = priceFormula }) rows
     mapM (\product -> do
-        dimensions <- Dimension.getDimensionsByProductId conn (productId product)
-        images <- Image.getImagesByProductId conn (productId product)
+        dimensions <- Dimension.getDimensionsByProductId conn bucket (productId product)
+        images <- Image.getImagesByProductId conn bucket (productId product)
         return product { dimensions = dimensions, images = images }
         ) products

@@ -32,11 +32,11 @@ instance Aeson.ToJSON Dimension
 rowToDimension :: (Int, Int, String, String) -> Dimension
 rowToDimension (dimensionId, productId, name, symbol) = Dimension { dimensionId = dimensionId, productId = productId, name = name, symbol = symbol }
 
-getDimensionsByProductId :: Connection -> Int -> IO [Dimension]
-getDimensionsByProductId conn productId = do
+getDimensionsByProductId :: Connection -> String -> Int -> IO [Dimension]
+getDimensionsByProductId conn bucket productId = do
     rows <- query conn "SELECT * FROM dimensions WHERE product_id = ?" (Only productId :: Only Int)
     let dimensions = map rowToDimension rows
     mapM (\dimension -> do
-        images <- Image.getImagesByDimensionId conn (dimensionId dimension)
+        images <- Image.getImagesByDimensionId conn bucket (dimensionId dimension)
         return dimension { images = images }
         ) dimensions
