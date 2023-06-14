@@ -108,6 +108,7 @@ test-suite backend-test
       ImageSpec
       JwtSpec
       LoggedHandlerSpec
+      OrdersHandlerSpec
       PasswordSpec
       PermissionSpec
       ProductsHandlerSpec

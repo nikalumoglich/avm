@@ -111,6 +111,7 @@ CREATE TABLE orders_dimensions (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `order_interactions`;
 CREATE TABLE order_interactions (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`order_id` BIGINT NOT NULL,
@@ -122,6 +123,7 @@ CREATE TABLE order_interactions (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `videos`;
 CREATE TABLE videos (
 	`id` BIGINT NOT NULL AUTO_INCREMENT,
 	`key` varchar(100) DEFAULT NULL,
