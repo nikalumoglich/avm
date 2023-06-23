@@ -113,6 +113,8 @@ calculatePriceRequest = "{ \
 
 calculatePriceResponse = "{\"value\":24}"
 
+calculatePriceWrongFormulaResponse = "{\"value\":0}"
+
 suiteSpec :: Connection -> String -> String -> String -> String -> String -> Spec
 suiteSpec dbConn host database user password bucket = do
 
@@ -156,4 +158,13 @@ suiteSpec dbConn host database user password bucket = do
         token' <- createUser dbConn
         let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
         loggedRequest token methodPost "/products/calculatePrice" calculatePriceRequest `shouldRespondWithPredicate` (\response -> calculatePriceResponse == response, "Expected response not fulfilled")
+
+      it "Should not calculate product price with incorrect formula" $ do
+        liftIO (cleanDb dbConn)
+        liftIO (createProduct dbConn)
+        void (liftIO (execute dbConn "UPDATE products SET price_formula = '{height} * {width} * {depth} !' WHERE id = 1" ()))
+        token' <- createUser dbConn
+        let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
+        loggedRequest token methodPost "/products/calculatePrice" calculatePriceRequest `shouldRespondWithPredicate` (\response -> calculatePriceWrongFormulaResponse == response, "Expected response not fulfilled")
+
 

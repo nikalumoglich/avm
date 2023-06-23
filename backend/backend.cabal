@@ -105,6 +105,7 @@ test-suite backend-test
   other-modules:
       AppSpec
       DimensionSpec
+      ImagesHandlerSpec
       ImageSpec
       JwtSpec
       LoggedHandlerSpec

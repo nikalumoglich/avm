@@ -1,6 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module OrdersHandlerSpec
+module ImagesHandlerSpec
     ( suiteSpec
     ) where
 
@@ -98,9 +98,6 @@ replaceImageUrlRegex = "https:\\/\\/.*?\\.s3\\..*?\\.amazonaws.com\\/(.*?)\\?X-A
 orderListResponse :: TL.Text
 orderListResponse = "[{\"closingDate\":null,\"dimensions\":[{\"dimensionId\":1,\"dimensionName\":\"height\",\"value\":2},{\"dimensionId\":2,\"dimensionName\":\"width\",\"value\":3},{\"dimensionId\":3,\"dimensionName\":\"depth\",\"value\":4}],\"interactions\":[],\"openingDate\":\"\",\"orderId\":1,\"price\":24,\"productId\":1,\"userId\":1}]"
 
-orderResponse :: TL.Text
-orderResponse = "{\"closingDate\":null,\"dimensions\":[{\"dimensionId\":1,\"dimensionName\":\"height\",\"value\":2},{\"dimensionId\":2,\"dimensionName\":\"width\",\"value\":3},{\"dimensionId\":3,\"dimensionName\":\"depth\",\"value\":4}],\"interactions\":[],\"openingDate\":\"\",\"orderId\":1,\"price\":24,\"productId\":1,\"userId\":1}"
-
 -- orderListResponseWithInteraction :: TL.Text
 orderListResponseWithInteraction = "[{\"closingDate\":null,\"dimensions\":[{\"dimensionId\":1,\"dimensionName\":\"height\",\"value\":2},{\"dimensionId\":2,\"dimensionName\":\"width\",\"value\":3},{\"dimensionId\":3,\"dimensionName\":\"depth\",\"value\":4}],\"interactions\":[{\"authorId\":1,\"createdAt\":\"\",\"images\":[{\"imageId\":1,\"url\":\"image1.png\"},{\"imageId\":2,\"url\":\"image2.png\"},{\"imageId\":3,\"url\":\"image3.png\"},{\"imageId\":4,\"url\":\"image4.png\"}],\"interactionId\":1,\"text\":\"test\"}],\"openingDate\":\"\",\"orderId\":1,\"price\":24,\"productId\":1,\"userId\":1}]"
 
@@ -136,11 +133,11 @@ suiteSpec :: Connection -> String -> String -> String -> String -> String -> Spe
 suiteSpec dbConn host database user password bucket = do
 
   with (api host database user password "secret2" 60 bucket) $ do
-    describe "OrdersHandlerSpec" $ do
+    describe "ImagesHandlerSpec" $ do
 
-      it "Orders return invalid Token" $ do
+      it "Images return invalid Token" $ do
         liftIO (cleanDb dbConn)
-        get "/orders" `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }
+        post "/images" "" `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }
 
       it "Should return empty order list" $ do
         liftIO (cleanDb dbConn)
@@ -179,14 +176,6 @@ suiteSpec dbConn host database user password bucket = do
         let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
         loggedRequest token methodPost "/orders" createOrderRequest `shouldRespondWith` createOrderResponse
         loggedRequest token methodGet "/orders" "" `shouldRespondWithPredicate` (\response -> TL.toStrict orderListResponse == Regex.gsub replaceDateRegex "" (TL.toStrict response), "Expected response not fulfilled")
-
-      it "Should return order" $ do
-        liftIO (cleanDb dbConn)
-        liftIO (createProduct dbConn)
-        token' <- createUser dbConn
-        let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodPost "/orders" createOrderRequest `shouldRespondWith` createOrderResponse
-        loggedRequest token methodGet "/orders/1" "" `shouldRespondWithPredicate` (\response -> TL.toStrict orderResponse == Regex.gsub replaceDateRegex "" (TL.toStrict response), "Expected response not fulfilled")
 
       it "Should not create order interaction with invalid token" $ do
         post "/orders/interactions" createOrderInteractionResquest `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }

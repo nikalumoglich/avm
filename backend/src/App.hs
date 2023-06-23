@@ -64,6 +64,8 @@ api host database user password secret sessionTime bucket = do
 
         get "/products" (ProductsHandler.listProducts secret sessionTime bucket dbConn)
 
+        get "/orders/:orderId" (OrdersHandler.getOrderById secret sessionTime bucket dbConn)
+
         get "/orders" (OrdersHandler.listOrdersByUser secret sessionTime bucket dbConn)
 
         post "/orders" (OrdersHandler.createOrder secret sessionTime bucket dbConn)

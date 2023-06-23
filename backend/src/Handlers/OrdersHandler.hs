@@ -1,5 +1,8 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Handlers.OrdersHandler
-    ( listOrdersByUser
+    ( getOrderById
+    , listOrdersByUser
     , createOrder
     , createOrderInteraction
     ) where
@@ -23,6 +26,12 @@ invalidJsonResponse :: ActionT TL.Text IO ()
 invalidJsonResponse = status badRequest400 >> json invalidJsonError
 unauthorizedResponse :: ActionT TL.Text IO ()
 unauthorizedResponse = status unauthorized401 >> json invalidSessionError
+
+getOrderById secret sessionTime bucket conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\_ -> do
+                orderId <- param "orderId"
+                order <- liftIO (Order.getOrderById conn bucket orderId)
+                json (OrderResponse.orderToResponse order)
+                )
 
 listOrdersByUser secret sessionTime bucket conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\session -> do
                 orders <- liftIO (Order.listOrdersByUserId conn bucket (Session.userId session))
