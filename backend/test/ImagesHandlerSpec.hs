@@ -16,10 +16,11 @@ import qualified Data.ByteString.Lazy.UTF8 as BSLU
 import Control.Monad.IO.Class
 import Network.Wai.Test
 import Network.HTTP.Types
+import qualified System.Directory as Directory
+import qualified System.IO
 import App
 import Control.Monad
 import Data.Maybe
-import qualified Text.Regex.Pcre2 as Regex
 import qualified Data.Aeson as Aeson
 import qualified Security.Jwt as Jwt
 
@@ -139,61 +140,15 @@ suiteSpec dbConn host database user password bucket = do
         liftIO (cleanDb dbConn)
         post "/images" "" `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }
 
-      it "Should return empty order list" $ do
+      it "Should upload file" $ do
         liftIO (cleanDb dbConn)
         token' <- createUser dbConn
         let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodGet "/orders" "" `shouldRespondWithPredicate` (\response -> "[]" == response, "List not empty")
 
-      it "Should not create order with invalid JSON" $ do
-        liftIO (cleanDb dbConn)
-        liftIO (createProduct dbConn)
-        token' <- createUser dbConn
-        let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodPost "/orders" "" `shouldRespondWith` "{\"code\":1,\"message\":\"Invalid Json format\"}" { matchStatus = 400 }
+        currentPath <- liftIO (Directory.getCurrentDirectory)
+        let fullPath = currentPath ++ "/test/res/image1.jpg"
+        liftIO (print "fullPath")
+        liftIO  (print fullPath)
+        fileContents <- liftIO (DBL.readFile fullPath)
 
-      it "Should not create order with invalid token" $ do
-        post "/orders" createOrderRequest `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }
-
-      it "Should create order" $ do
-        liftIO (cleanDb dbConn)
-        liftIO (createProduct dbConn)
-        token' <- createUser dbConn
-        let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodPost "/orders" createOrderRequest `shouldRespondWith` createOrderResponse
-
-      it "Should return empty order list" $ do
-        liftIO (cleanDb dbConn)
-        liftIO (createProduct dbConn)
-        token' <- createUser dbConn
-        let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodGet "/orders" "" `shouldRespondWith` "[]"
-
-      it "Should return order list" $ do
-        liftIO (cleanDb dbConn)
-        liftIO (createProduct dbConn)
-        token' <- createUser dbConn
-        let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodPost "/orders" createOrderRequest `shouldRespondWith` createOrderResponse
-        loggedRequest token methodGet "/orders" "" `shouldRespondWithPredicate` (\response -> TL.toStrict orderListResponse == Regex.gsub replaceDateRegex "" (TL.toStrict response), "Expected response not fulfilled")
-
-      it "Should not create order interaction with invalid token" $ do
-        post "/orders/interactions" createOrderInteractionResquest `shouldRespondWith` "{\"code\":2,\"message\":\"Invalid Session\"}" { matchStatus = 401 }
-
-      it "Should not create order interaction with invalid JSON" $ do
-        liftIO (cleanDb dbConn)
-        liftIO (createProduct dbConn)
-        token' <- createUser dbConn
-        let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodPost "/orders" createOrderRequest `shouldRespondWith` createOrderResponse
-        loggedRequest token methodPost "/orders/interactions" "" `shouldRespondWith` "{\"code\":1,\"message\":\"Invalid Json format\"}" { matchStatus = 400 }
-        loggedRequest token methodGet "/orders" "" `shouldRespondWithPredicate` (\response -> TL.toStrict orderListResponse == Regex.gsub replaceDateRegex "" (TL.toStrict response), "Expected response not fulfilled")
-
-      it "Should create order interaction" $ do
-        liftIO (cleanDb dbConn)
-        liftIO (createProduct dbConn)
-        token' <- createUser dbConn
-        let token = BSL.toStrict (BSLU.fromString (Jwt.token token'))
-        loggedRequest token methodPost "/orders" createOrderRequest `shouldRespondWith` createOrderResponse
-        loggedRequest token methodPost "/orders/interactions" createOrderInteractionResquest `shouldRespondWith` createOrderInteractionResponse
-        loggedRequest token methodGet "/orders" "" `shouldRespondWithPredicate` (\response -> TL.toStrict orderListResponseWithInteraction == Regex.gsub replaceImageUrlRegex "$1" (Regex.gsub replaceDateRegex "" (TL.toStrict response)), "Expected response not fulfilled")
+        loggedRequest token methodPost "/images" fileContents `shouldRespondWithPredicate` (\response -> "[]" == response, "List not empty")
