@@ -1,4 +1,5 @@
 install ncurses-devel on fedora
+install install mysql-devel on fedora
 
 sudo apt install libtinfo-dev on debian based
 
