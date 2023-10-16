@@ -1,6 +1,7 @@
 install ncurses-devel on fedora
 install mysql-devel on fedora
 install ghc-pcre-light on fedora
+install ghc-pcre-light-devel on fedora
 
 sudo apt install libtinfo-dev on debian based
 
