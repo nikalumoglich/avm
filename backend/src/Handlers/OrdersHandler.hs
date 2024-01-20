@@ -22,9 +22,7 @@ import qualified Transport.OrderInteractionCreatedResponse as OrderInteractionCr
 
 import Errors ( invalidJsonError, invalidSessionError )
 
-invalidJsonResponse :: ActionT TL.Text IO ()
 invalidJsonResponse = status badRequest400 >> json invalidJsonError
-unauthorizedResponse :: ActionT TL.Text IO ()
 unauthorizedResponse = status unauthorized401 >> json invalidSessionError
 
 getOrderById secret sessionTime bucket conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\_ -> do

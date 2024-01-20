@@ -16,7 +16,6 @@ import qualified Transport.SignInRequest as SignInRequest
 import qualified Handlers.HandlerCommons as HandlersCommons
 import Errors
 
-signInHandler :: String -> Int -> Connection -> ActionT TL.Text IO ()
 signInHandler secret sessionTime conn = HandlersCommons.handleJsonRequest (status badRequest400 >> json invalidJsonError) (\signInRequest -> do
                 user <- liftIO (User.getUserByEmail conn (SignInRequest.email signInRequest))
                 case user of

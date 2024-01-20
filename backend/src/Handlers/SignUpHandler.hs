@@ -16,7 +16,6 @@ import qualified Transport.UserCreatedResponse as UserCreatedResponse
 import Errors
 
 
-signUpHandler :: Connection -> ActionT TL.Text IO ()
 signUpHandler conn = HandlersCommons.handleJsonRequest (status badRequest400 >> json invalidJsonError) (\user -> do
                 hashedPassword <- Password.hashPassword (CreateUserRequest.password user)
                 let userWithHashedPassword = user { CreateUserRequest.password = TL.unpack hashedPassword }

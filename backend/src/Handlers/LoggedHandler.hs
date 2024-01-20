@@ -14,12 +14,9 @@ import qualified Handlers.HandlerCommons as HandlersCommons
 import qualified Transport.CreateUserRequest as CreateUserRequest
 import Errors ( invalidJsonError, invalidSessionError )
 
-invalidJsonResponse :: ActionT TL.Text IO ()
 invalidJsonResponse = status badRequest400 >> json invalidJsonError
-unauthorizedResponse :: ActionT TL.Text IO ()
 unauthorizedResponse = status unauthorized401 >> json invalidSessionError
 
-loggedHandler :: String -> Int -> Connection -> ActionT TL.Text IO ()
 loggedHandler secret sessionTime conn = HandlersCommons.handleLoggedJsonRequest secret sessionTime conn "userLevel" invalidJsonResponse unauthorizedResponse (\user session -> do
                 hashedPassword <- Password.hashPassword (CreateUserRequest.password user)
                 let userWithHashedPassword = user { CreateUserRequest.password = TL.unpack hashedPassword }

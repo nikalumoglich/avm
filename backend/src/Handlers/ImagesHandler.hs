@@ -19,7 +19,7 @@ import qualified Controller.AwsUtils as AwsUtils
 import qualified Amazonka.S3 as S3
 
 import Errors ( invalidSessionError )
-unauthorizedResponse :: ActionT TL.Text IO ()
+
 unauthorizedResponse = status unauthorized401 >> json invalidSessionError
 
 putImages secret sessionTime bucket conn = HandlersCommons.handleLoggedFilesRequest secret sessionTime conn "userLevel" unauthorizedResponse (\files _ -> do

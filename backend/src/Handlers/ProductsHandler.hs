@@ -22,9 +22,7 @@ import Errors ( invalidJsonError, invalidSessionError )
 import qualified Controller.ProductController as ProductController
 
 
-invalidJsonResponse :: ActionT TL.Text IO ()
 invalidJsonResponse = status badRequest400 >> json invalidJsonError
-unauthorizedResponse :: ActionT TL.Text IO ()
 unauthorizedResponse = status unauthorized401 >> json invalidSessionError
 
 getProduct secret sessionTime bucket conn = HandlersCommons.handleLoggedRequest secret sessionTime conn "userLevel" unauthorizedResponse (\_ -> do

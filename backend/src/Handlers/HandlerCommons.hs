@@ -21,7 +21,6 @@ import qualified Model.User as User
 import qualified Model.Session as Session
 import qualified Model.Permission as Permission
 
-handleJsonRequest :: Aeson.FromJSON t => ActionT TL.Text IO b -> (t -> ActionT TL.Text IO b) -> ActionT TL.Text IO b
 handleJsonRequest errorHandler successHandler = do
     requestBody <- body
     let maybeJson = Aeson.decode requestBody
@@ -29,7 +28,6 @@ handleJsonRequest errorHandler successHandler = do
         Nothing -> errorHandler
         Just json' -> successHandler json'
 
-handleLoggedJsonRequest :: Aeson.FromJSON t => String -> Int -> Connection -> String -> ActionT TL.Text IO b -> ActionT TL.Text IO b -> (t -> Session.Session -> ActionT TL.Text IO b) -> ActionT TL.Text IO b
 handleLoggedJsonRequest secret sessionTime conn requiredPermission invalidJsonErrorHandler invalidTokenErrorHandler successHandler = do
     session <- getSession secret sessionTime conn requiredPermission
     case session of
@@ -41,7 +39,6 @@ handleLoggedJsonRequest secret sessionTime conn requiredPermission invalidJsonEr
                 Nothing -> invalidJsonErrorHandler
                 Just json' -> successHandler json' session'
 
-handleLoggedRequest :: String -> Int -> Connection -> String -> ActionT TL.Text IO b -> (Session.Session -> ActionT TL.Text IO b) -> ActionT TL.Text IO b
 handleLoggedRequest secret sessionTime conn requiredPermission invalidTokenErrorHandler successHandler = do
     session <- getSession secret sessionTime conn requiredPermission
     case session of
@@ -49,7 +46,6 @@ handleLoggedRequest secret sessionTime conn requiredPermission invalidTokenError
         session' -> successHandler session'
     
 
-handleLoggedFilesRequest :: String -> Int -> Connection -> String -> ActionT TL.Text IO b -> ([File] -> Session.Session -> ActionT TL.Text IO b) -> ActionT TL.Text IO b 
 handleLoggedFilesRequest secret sessionTime conn requiredPermission invalidTokenErrorHandler successHandler = do
     session <- getSession secret sessionTime conn requiredPermission
     case session of
@@ -58,7 +54,6 @@ handleLoggedFilesRequest secret sessionTime conn requiredPermission invalidToken
             requestFiles <- files
             successHandler requestFiles session'
 
-getSession :: String -> Int -> Connection -> String -> ActionT TL.Text IO Session.Session
 getSession secret sessionTime conn requiredPermission = do
     authorizationHeader <- header $ TL.pack "Authorization"
     case authorizationHeader of
