@@ -1,4 +1,4 @@
-FROM haskell:9.2.7-slim
+FROM haskell:9.6.4-slim
 
 RUN apt-get update -qq && \
   apt-get install -qq -y libssl-dev libpcre3 libpcre3-dev build-essential default-libmysqlclient-dev --fix-missing --no-install-recommends && \
