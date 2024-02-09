@@ -14,4 +14,4 @@ set +e
 echo "Building new images"
 
 set -ex
-docker build ./ -f ./docker/Dockerfile -t avm-backend:1.0
+docker build ./ -f ./docker/Dockerfile -t avm-backend:latest
