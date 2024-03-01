@@ -5,16 +5,22 @@
 module Controller.AwsUtils
     ( getPresignedURL
     , uploadFile
+    , sendEmail
     ) where
 
 import qualified Amazonka as AWS
 import qualified Amazonka.S3 as S3
+import qualified Amazonka.SES as SES
+import qualified Amazonka.SES.SendRawEmail as SES.SendRawEmail
+import qualified Amazonka.SES.Types as SESTypes
+
 import qualified System.IO as IO
 import qualified Data.Time
 import qualified Data.UUID.V4 as V4
 import qualified Data.UUID as UUID
 import qualified Network.Wai.Parse
 import qualified Data.ByteString.UTF8 as BSU
+import qualified Data.Text as T
 
 
 getPresignedURL :: S3.BucketName -> S3.ObjectKey -> IO String
@@ -39,3 +45,26 @@ uploadFile bucket (_, fileInfo) = do
     _ <- AWS.runResourceT $ AWS.send env (S3.newPutObject bucket s3Key (AWS.Hashed (AWS.toHashed fileContents)))
 
     return (UUID.toText key)
+
+
+
+sendEmail message = do
+    logger <- AWS.newLogger AWS.Debug IO.stdout
+    discoveredEnv <- AWS.newEnv AWS.discover
+    let env = discoveredEnv { AWS.logger = logger, AWS.region = AWS.NorthVirginia }
+
+    let rm = SES.newRawMessage ("From: tiozao@tiozao.co\nTo: nikal.umoglich@gmail.com\nSubject: Your Subject\n\n" <> message)
+
+    let re = SES.SendRawEmail' { 
+        SES.SendRawEmail.destinations = Just [ "nikal.umoglich@gmail.com" ],
+        SES.SendRawEmail.configurationSetName = Nothing,
+        SES.SendRawEmail.fromArn = Nothing,
+        SES.SendRawEmail.returnPathArn = Nothing,
+        SES.SendRawEmail.source = Just "tiozao@tiozao.co",
+        SES.SendRawEmail.sourceArn = Nothing,
+        SES.SendRawEmail.tags = Nothing,
+        SES.SendRawEmail.rawMessage = rm }
+
+    AWS.runResourceT $ AWS.send env re
+
+    putStrLn "Teste"

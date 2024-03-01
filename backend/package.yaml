@@ -53,6 +53,7 @@ library:
     - exceptions
     - amazonka
     - amazonka-s3
+    - amazonka-ses
     - base
     - conduit
     - conduit-extra
