@@ -63,6 +63,7 @@ library
       aeson
     , amazonka
     , amazonka-s3
+    , amazonka-ses
     , base
     , bytestring
     , conduit

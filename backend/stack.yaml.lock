@@ -69,6 +69,19 @@ packages:
   original:
     subdir: lib/services/amazonka-s3
     url: https://github.com/brendanhay/amazonka/archive/e081929d5a81f30397c9c9a219b154da1a922fb8.tar.gz
+- completed:
+    name: amazonka-ses
+    pantry-tree:
+      sha256: c3fa3cf8a4c008d34526a859d50fca579e301edf1db1fefd70fd9c937d6f4f00
+      size: 22928
+    sha256: 2347d1449fdbb0f6596415862eff26215a6d8b9bd83ef9db63a7f5148a42a310
+    size: 34734021
+    subdir: lib/services/amazonka-ses
+    url: https://github.com/brendanhay/amazonka/archive/e081929d5a81f30397c9c9a219b154da1a922fb8.tar.gz
+    version: '2.0'
+  original:
+    subdir: lib/services/amazonka-ses
+    url: https://github.com/brendanhay/amazonka/archive/e081929d5a81f30397c9c9a219b154da1a922fb8.tar.gz
 snapshots:
 - completed:
     sha256: 7b975b104cb3dbf0c297dfd01f936a4d2ee523241dd0b1ae960522b833fe3027

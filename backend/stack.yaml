@@ -52,6 +52,7 @@ extra-deps:
   - lib/services/amazonka-sso
   - lib/services/amazonka-sts
   - lib/services/amazonka-s3
+  - lib/services/amazonka-ses
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
