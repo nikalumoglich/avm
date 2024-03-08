@@ -152,6 +152,16 @@ CREATE TABLE order_interactions_videos (
 ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `recovery_code`;
+CREATE TABLE `recovery_code` (
+  `id` BIGINT NOT NULL AUTO_INCREMENT,
+  `user_id` BIGINT NOT NULL,
+  `hashed_code` varchar(100) NOT NULL,
+  `expiration` BIGINT UNSIGNED NOT NULL,
+  `status` varchar(100) NOT NULL,
+  PRIMARY KEY (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 # ---------------------------------
 
 INSERT INTO permissions (permission) VALUES ('userLevel');

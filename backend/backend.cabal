@@ -28,6 +28,7 @@ library
       Controller.AwsUtils
       Controller.ProductController
       Errors
+      Handlers.AccountRecoveryHandler
       Handlers.HandlerCommons
       Handlers.ImagesHandler
       Handlers.LoggedHandler
@@ -40,10 +41,12 @@ library
       Model.Order
       Model.Permission
       Model.Product
+      Model.RecoveryCode
       Model.Session
       Model.User
       Security.Jwt
       Security.Password
+      Transport.AccessCodeRequest
       Transport.CalculatePriceRequest
       Transport.CalculatePriceResponse
       Transport.CreateOrderInteractionRequest
@@ -76,6 +79,7 @@ library
     , lens
     , mysql-simple
     , password
+    , random
     , resourcet
     , scientific
     , scotty

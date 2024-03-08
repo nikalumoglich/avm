@@ -62,6 +62,7 @@ library:
     - uuid
     - wai-extra
     - utf8-string
+    - random
 
 executables:
   backend-exe:
