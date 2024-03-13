@@ -3,14 +3,11 @@
 {-# OPTIONS_GHC -Wno-partial-fields #-}
 
 module Model.User
-    ( userId
-    , name
-    , email
-    , password
-    , saveUser
+    ( saveUser
     , getUserByEmail
     , getUserById
-    , User ( User, UserNotFound )
+    , changePassword
+    , User (..)
     ) where
 
 import GHC.Generics
@@ -52,3 +49,6 @@ getUserById conn userId = do
     case rows of
         [] -> return UserNotFound
         (userId, name, email', password):_ -> return (User { userId = userId, name = name, email = email', password = password })
+
+changePassword conn userId hashedPassword = do
+        execute conn "UPDATE users SET hashed_password = ? WHERE id = ?" (hashedPassword, userId)

@@ -21,6 +21,7 @@ import qualified Handlers.LoggedHandler as LoggedHandler
 import qualified Handlers.ProductsHandler as ProductsHandler
 import qualified Handlers.OrdersHandler as OrdersHandler
 import qualified Handlers.ImagesHandler as ImagesHandler
+import qualified Handlers.AccountRecoveryHandler as AccountRecoveryHandler
 
 getEnvOrDefault :: String -> String -> IO String
 getEnvOrDefault name defaultValue = getEnv name `catch` handleIsDoesNotExistError defaultValue
@@ -72,4 +73,8 @@ api host database user password secret sessionTime bucket = do
         post "/orders/interactions" (OrdersHandler.createOrderInteraction secret sessionTime dbConn)
 
         post "/images" (ImagesHandler.putImages secret sessionTime bucket dbConn)
+
+        post "/recoveryPassword" (AccountRecoveryHandler.requestRecoveryCode sessionTime dbConn)
+
+        post "/resetPassword" (AccountRecoveryHandler.resetPassword dbConn)
       

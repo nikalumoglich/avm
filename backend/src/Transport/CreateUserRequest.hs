@@ -10,7 +10,7 @@ module Transport.CreateUserRequest
     ) where
 
 import GHC.Generics
-import qualified Data.Aeson as Aeson
+import Data.Aeson
 
 data CreateUserRequest = CreateUserRequest
   { name :: String
@@ -18,8 +18,8 @@ data CreateUserRequest = CreateUserRequest
   , password :: String
   } deriving (Generic)
 
-instance Aeson.FromJSON CreateUserRequest where
-    parseJSON (Aeson.Object v) = CreateUserRequest
-        <$> v Aeson..: "name"
-        <*> v Aeson..: "email"
-        <*> v Aeson..: "password"
+instance FromJSON CreateUserRequest where
+    parseJSON (Object v) = CreateUserRequest
+        <$> v .: "name"
+        <*> v .: "email"
+        <*> v .: "password"

@@ -3,9 +3,7 @@ module Handlers.SignUpHandler
     ) where
 
 import Web.Scotty
-import Web.Scotty.Internal.Types
 import Network.HTTP.Types.Status
-import Database.MySQL.Simple
 import Control.Monad.IO.Class
 import qualified Data.Text.Lazy as TL
 import qualified Security.Password as Password

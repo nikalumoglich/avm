@@ -48,15 +48,15 @@ uploadFile bucket (_, fileInfo) = do
 
 
 
-sendEmail message = do
+sendEmail destination title message = do
     logger <- AWS.newLogger AWS.Debug IO.stdout
     discoveredEnv <- AWS.newEnv AWS.discover
     let env = discoveredEnv { AWS.logger = logger, AWS.region = AWS.NorthVirginia }
 
-    let rm = SES.newRawMessage ("From: tiozao@tiozao.co\nTo: nikal.umoglich@gmail.com\nSubject: Your Subject\n\n" <> message)
+    let rm = SES.newRawMessage ("From: tiozao@tiozao.co\nTo: nikal.umoglich@gmail.com\nSubject: " <> BSU.fromString title <> "\n\n" <> BSU.fromString message)
 
-    let re = SES.SendRawEmail' { 
-        SES.SendRawEmail.destinations = Just [ "nikal.umoglich@gmail.com" ],
+    let re = SES.SendRawEmail' {
+        SES.SendRawEmail.destinations = Just [ T.pack destination ],
         SES.SendRawEmail.configurationSetName = Nothing,
         SES.SendRawEmail.fromArn = Nothing,
         SES.SendRawEmail.returnPathArn = Nothing,
@@ -66,5 +66,3 @@ sendEmail message = do
         SES.SendRawEmail.rawMessage = rm }
 
     AWS.runResourceT $ AWS.send env re
-
-    putStrLn "Teste"

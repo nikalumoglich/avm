@@ -6,6 +6,7 @@ module Errors
     , userNotFoundError
     , wrongPasswordError
     , userAlreadyExistError
+    , incorrectRecoveryCode
     , Error (Error)
     ) where
 
@@ -48,4 +49,10 @@ userAlreadyExistError :: Error
 userAlreadyExistError = Error {
     message = "User already exist",
     code = 5
+}
+
+incorrectRecoveryCode :: Error
+incorrectRecoveryCode = Error {
+    message = "Incorrect recovery code",
+    code = 6
 }

@@ -9,14 +9,14 @@ module Transport.SignInRequest
     ) where
 
 import GHC.Generics
-import qualified Data.Aeson as Aeson
+import Data.Aeson
 
 data SignInRequest = SignInRequest
   { email :: String
   , password :: String
   } deriving (Generic)
 
-instance Aeson.FromJSON SignInRequest where
-    parseJSON (Aeson.Object v) = SignInRequest
-        <$> v Aeson..: "email"
-        <*> v Aeson..: "password"
+instance FromJSON SignInRequest where
+    parseJSON (Object v) = SignInRequest
+        <$> v .: "email"
+        <*> v .: "password"
