@@ -55,6 +55,7 @@ library
       Transport.OrderCreatedResponse
       Transport.OrderInteractionCreatedResponse
       Transport.OrderResponse
+      Transport.ResetPasswordRequest
       Transport.SignInRequest
       Transport.UserCreatedResponse
   other-modules:

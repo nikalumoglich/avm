@@ -74,5 +74,7 @@ api host database user password secret sessionTime bucket = do
 
         post "/images" (ImagesHandler.putImages secret sessionTime bucket dbConn)
 
-        post "/recovery" (AccountRecoveryHandler.requestRecoveryCode sessionTime dbConn)
+        post "/recoveryPassword" (AccountRecoveryHandler.requestRecoveryCode sessionTime dbConn)
+
+        post "/resetPassword" (AccountRecoveryHandler.resetPassword dbConn)
       

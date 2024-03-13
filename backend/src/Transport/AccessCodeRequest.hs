@@ -8,12 +8,12 @@ module Transport.AccessCodeRequest
     ) where
 
 import GHC.Generics
-import qualified Data.Aeson as Aeson
+import Data.Aeson
 
 data AccessCodeRequest = AccessCodeRequest
   { email :: String
   } deriving (Generic)
 
-instance Aeson.FromJSON AccessCodeRequest where
-    parseJSON (Aeson.Object v) = AccessCodeRequest
-        <$> v Aeson..: "email"
+instance FromJSON AccessCodeRequest where
+    parseJSON (Object v) = AccessCodeRequest
+        <$> v .: "email"
