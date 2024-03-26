@@ -15,6 +15,7 @@ import qualified LoggedHandlerSpec
 import qualified ProductsHandlerSpec
 import qualified OrdersHandlerSpec
 import qualified ImagesHandlerSpec
+import qualified AccountRecoveryHandlerSpec
 import System.Environment
 import Control.Exception
 import qualified System.IO.Error
@@ -57,3 +58,4 @@ spec conn host database user password bucket = do
   ProductsHandlerSpec.suiteSpec conn host database user password bucket
   OrdersHandlerSpec.suiteSpec conn host database user password bucket
   ImagesHandlerSpec.suiteSpec conn host database user password bucket
+  AccountRecoveryHandlerSpec.suiteSpec conn host database user password bucket
