@@ -29,6 +29,7 @@ getEnvOrDefault name defaultValue = getEnv name `catch` handleIsDoesNotExistErro
 handleIsDoesNotExistError :: String -> System.IO.Error.IOError -> IO String
 handleIsDoesNotExistError defaultValue _ = return defaultValue
 
+{-
 app :: Bool -> IO ()
 app shouldStart = do
     host <- getEnvOrDefault "DB_HOST" "127.0.0.1"
@@ -45,6 +46,12 @@ app shouldStart = do
     putStrLn ("AVM running on port " ++ port ++ " - version: " ++ version)
 
     when shouldStart $ api host database user password secret sessionTime bucket >>= run (read port)
+-}
+
+app :: Bool -> IO ()
+app shouldStart = scotty 3000 $
+    get "/" $ do
+        html $ mconcat ["<h1>Scotty, beam me up!</h1>"]
 
 api :: String -> String -> String -> String -> String -> Int -> String -> IO Application
 api host database user password secret sessionTime bucket = do

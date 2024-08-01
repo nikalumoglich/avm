@@ -17,3 +17,7 @@ export AWS_ACCESS_KEY_ID=
 export AWS_SECRET_ACCESS_KEY=
 export AWS_DEFAULT_REGION=sa-east-1
 export AWS_S3_BUCKET=tiozao-avm
+
+
+
+https://docs.aws.amazon.com/eks/latest/userguide/sample-deployment.html

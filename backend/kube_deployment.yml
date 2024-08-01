@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: avm-backend
+  namespace: avm
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: avm-backed
+  template:
+    metadata:
+      labels:
+        app: avm-backed
+    spec:
+      containers:
+        - name: avm-backed
+          image: 951726806028.dkr.ecr.sa-east-1.amazonaws.com/avm:latest
+          ports:
+            - name: tcp
+              containerPort: 3000
